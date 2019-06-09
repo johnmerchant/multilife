@@ -1,0 +1,9 @@
+{
+  "name": "multilife",
+  "version": "1.0.0",
+  "description": "Multiplayer game of life",
+  "main": "server.js",
+  "repository": "https://github.com/multilife",
+  "author": "John Merchant <john@merchant.on.net>",
+  "license": "MIT"
+}
