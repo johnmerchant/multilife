@@ -17,13 +17,6 @@ export class Game {
      * Gets the next instance of the Game of Life state
      */
     tick(): Game {
-        let {min, max} = this.range();
-        
-        // expand the edge of the world by 1 cell, this lets us detect dead cells on the edge
-        min.x--;
-        min.y--;
-        max.x++;
-        max.y++;
 
         // lookup living cells
         const lookup = this.createLookup();
