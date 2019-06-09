@@ -26,10 +26,10 @@ describe('neighbors', () => {
     
     test('range', () => {
         const { min, max } = game.range();
-        expect(min.x).toBe(-1);
-        expect(min.y).toBe(-1);
-        expect(max.x).toBe(1);
-        expect(max.y).toBe(1);
+        expect(min.x).toBe(-2);
+        expect(min.y).toBe(-2);
+        expect(max.x).toBe(2);
+        expect(max.y).toBe(2);
     });
     
     test('createMap', () => {
@@ -61,9 +61,8 @@ describe('glider', () => {
 
     console.log(game.toString())
 
-    test('tick1', () => {
+    test('tick', () => {
         const tick1 = game.tick();
-        const lookup = tick1.createLookup();
         console.log(tick1.toString());
         console.log(tick1.tick().toString());
     });
