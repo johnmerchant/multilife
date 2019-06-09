@@ -20,7 +20,7 @@ describe('neighbors', () => {
     
 
     test('lookup neighbors', () => {
-        const neighbors = game.lookupNeighbors({ x: 0, y: 0 }, game.createLookup());
+        const neighbors = game.lookupNeighbors({ x: 0, y: 0 });
         expect(neighbors.length).toBe(8);
     });
     
@@ -33,10 +33,9 @@ describe('neighbors', () => {
     });
     
     test('createMap', () => {
-        const lookup = game.createLookup();
-        expect(lookup(-1, -1)).toBe(true);
-        expect(lookup(-8, -2)).toBe(false);
-        expect(lookup(0, 1)).toBe(true);
+        expect(game.lookup(-1, -1)).toBe(true);
+        expect(game.lookup(-8, -2)).toBe(false);
+        expect(game.lookup(0, 1)).toBe(true);
     });
 });
 
