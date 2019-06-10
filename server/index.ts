@@ -1,16 +1,19 @@
 import * as http from 'http';
 import * as ws from 'ws';
+import express from 'express';
 import { GameEvents } from './game-events';
 import { Message, MessageType, PutCell, Update } from '../@types/messages';
 
 export class Server {
 
+    private app = express();
     private events = new GameEvents();
     private httpServer: http.Server;
     private wsServer: ws.Server;
 
     constructor() {
-        this.httpServer = http.createServer();
+        this.app.use(express.static('static'));
+        this.httpServer = http.createServer(this.app);
         this.wsServer = new ws.Server({ server: this.httpServer });
         this.wsServer.on('connection', connection => {
             connection.on('message', this.onMessage);

@@ -7,16 +7,30 @@
   "author": "John Merchant <john@merchant.on.net>",
   "license": "MIT",
   "dependencies": {
+    "@emotion/core": "^10.0.10",
+    "@giantmachines/redux-websocket": "^1.1.2",
+    "express": "^4.17.1",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-redux": "^7.0.3",
+    "redux": "^4.0.1",
     "ws": "^7.0.0"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build-client": "parcel build client/index.html",
+    "build-server": "tsc"
   },
   "devDependencies": {
+    "@types/express": "^4.17.0",
     "@types/jest": "^24.0.13",
     "@types/node": "^12.0.7",
+    "@types/react": "^16.8.19",
+    "@types/react-dom": "^16.8.4",
+    "@types/react-redux": "^7.0.9",
     "@types/ws": "^6.0.1",
     "jest": "^24.8.0",
+    "parcel": "^1.12.3",
     "ts-jest": "^24.0.2",
     "typescript": "^3.5.1"
   }

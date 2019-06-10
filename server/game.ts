@@ -6,6 +6,14 @@ export class Game {
     private _world: World;
     private _lookup: WorldLookup;
 
+    get lookup() {
+        return this._lookup;
+    }
+
+    get world(): World {
+        return this._world;
+    }
+    
     /**
      * Creates an instance of the Game of Life
      * @param world A colleciton of living Cells
@@ -28,45 +36,24 @@ export class Game {
      * Gets the next instance of the Game of Life state
      */
     tick(): Game {
-
-        const nextWorld: World = []; // next gamestate
-        
-        for (const cell of this.cells()) {
-            const neighbors = [...this.lookupNeighbors(cell)];
-            const alive = this._lookup(cell.x, cell.y);
-            if (alive) {
-                // Rule 1.
-                let dies = underpopulated(neighbors.length);
-                if (dies) {
-                    continue; // rip.
+        return new Game(
+            [...this.cells()]
+            .map(cell => ({
+                cell,
+                neighbors: [...this.lookupNeighbors(cell)].length,
+                isAlive: this._lookup(cell.x, cell.y)        
+            }))
+            .filter(({ neighbors, isAlive }) => {
+                if (isAlive) {
+                    if (underpopulated(neighbors)) return false;
+                    if (nextGeneration(neighbors)) return true;
+                    if (overpopulated(neighbors)) return false;
+                } else {
+                    if (reproduce(neighbors)) return true; 
                 }
-
-                // Rule 2.
-                let lives = nextGeneration(neighbors.length);
-                if (lives) {
-                    nextWorld.push(cell);
-                    continue;
-                }
-
-                // Rule 3.
-                dies = overpopulated(neighbors.length);
-                if (dies) {
-                    continue; // rip.
-                }
-            } else {
-                // Rule 4.
-                let lives = reproduce(neighbors.length);
-                if (lives) {
-                    nextWorld.push(cell);
-                    continue;
-                }
-            }
-        }
-        return new Game(nextWorld);
-    }
-
-    get lookup() {
-        return this._lookup;
+            })
+            .map(({cell}) => cell)
+        );
     }
 
     /**
