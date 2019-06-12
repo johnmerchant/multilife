@@ -34,72 +34,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
-var http = __importStar(require("http"));
-var ws = __importStar(require("ws"));
-var express_1 = __importDefault(require("express"));
-var game_events_1 = require("./game-events");
-var models_1 = require("../models");
-var Server = /** @class */ (function () {
-    function Server() {
-        var _this = this;
-        this.app = express_1.default();
-        this.events = new game_events_1.GameEvents();
-        this.app.use(express_1.default.static('static'));
-        this.httpServer = http.createServer(this.app);
-        this.wsServer = new ws.Server({ server: this.httpServer });
-        this.wsServer.on('connection', function (connection) {
-            console.debug('client connected');
-            connection.on('message', function (data) { return _this.onMessage(data); });
-            var updateHandler = function (world) {
-                var update = {
-                    type: models_1.MessageType.Update,
-                    world: world
-                };
-                connection.send(JSON.stringify(update));
-            };
-            _this.events.on('update', function (world) { return updateHandler(world); });
-            connection.on('close', function () { return _this.events.off('update', updateHandler); });
-            _this.events.emit('refresh');
-        });
-    }
-    Server.prototype.onMessage = function (data) {
-        try {
-            var payload = JSON.parse(String(data));
-            switch (payload.type) {
-                case models_1.MessageType.SetCell:
-                    var _a = payload, cell = _a.cell, alive = _a.alive;
-                    console.debug({ cell: cell, alive: alive });
-                    this.events.emit('setcell', cell, alive);
-                    break;
-            }
-        }
-        catch (err) {
-            console.error(err);
-        }
-    };
-    Server.prototype.run = function () {
-        var _this = this;
-        var promise = new Promise(function (resolve) { return _this.httpServer.on('close', function () { return resolve(); }); });
-        this.httpServer.listen(5000, function () { return console.log('listening on 5000'); });
-        return promise;
-    };
-    return Server;
-}());
-exports.Server = Server;
+var server_1 = require("./server");
+exports.default = server_1.Server;
 if (typeof require !== 'undefined' && require.main === module) {
-    var server_1 = new Server();
+    var server_2 = new server_1.Server();
     (function () { return __awaiter(_this, void 0, void 0, function () {
         var err_1;
         return __generator(this, function (_a) {
@@ -107,7 +47,7 @@ if (typeof require !== 'undefined' && require.main === module) {
                 case 0:
                     _a.trys.push([0, 2, , 3]);
                     console.log('starting server...');
-                    return [4 /*yield*/, server_1.run()];
+                    return [4 /*yield*/, server_2.run()];
                 case 1:
                     _a.sent();
                     return [3 /*break*/, 3];

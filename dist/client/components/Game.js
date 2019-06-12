@@ -23,7 +23,7 @@ var actions_1 = require("../actions");
 var CELL_HEIGHT = 12;
 var CELL_WIDTH = 12;
 var GameComponent = function (_a) {
-    var world = _a.world, range = _a.range, setCell = _a.setCell, width = _a.width, height = _a.height;
+    var world = _a.world, range = _a.range, setCell = _a.setCell, color = _a.color, width = _a.width, height = _a.height;
     var ref = react_1.useRef(null);
     react_1.useEffect(function () {
         var e_1, _a;
@@ -33,11 +33,10 @@ var GameComponent = function (_a) {
             if (ctx) {
                 ctx.fillStyle = '#FFFFFF';
                 ctx.fillRect(0, 0, width * CELL_WIDTH, height * CELL_WIDTH);
-                ctx.fillStyle = '#000000';
                 try {
                     for (var world_1 = __values(world), world_1_1 = world_1.next(); !world_1_1.done; world_1_1 = world_1.next()) {
                         var cell = world_1_1.value;
-                        ctx.fillRect(cell.x * CELL_WIDTH, cell.y * CELL_HEIGHT, CELL_WIDTH, CELL_HEIGHT);
+                        drawCell(ctx, cell);
                     }
                 }
                 catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -51,15 +50,30 @@ var GameComponent = function (_a) {
         }
     }, [ref, range, world]);
     return react_1.default.createElement("canvas", { ref: ref, width: width * CELL_WIDTH, height: height * CELL_HEIGHT, onClick: function (event) {
-            setCell({
-                x: Math.round(event.clientX / CELL_WIDTH),
-                y: Math.round(event.clientY / CELL_HEIGHT)
-            }, true);
+            var canvas = event.target;
+            var rect = canvas.getBoundingClientRect();
+            var x = event.clientX - rect.left;
+            var y = event.clientY - rect.top;
+            var cell = {
+                x: Math.floor(x / CELL_WIDTH),
+                y: Math.floor(y / CELL_HEIGHT),
+                color: color
+            };
+            setCell(cell, true);
+            var ctx = canvas.getContext('2d');
+            if (ctx) {
+                ctx.fillStyle = color;
+                drawCell(ctx, cell);
+            }
         } });
+};
+var drawCell = function (ctx, cell) {
+    ctx.fillStyle = cell.color;
+    ctx.fillRect(cell.x * CELL_WIDTH, cell.y * CELL_HEIGHT, CELL_WIDTH, CELL_HEIGHT);
 };
 exports.Game = react_redux_1.connect(function (_a) {
     var game = _a.game;
-    return ({ world: game.world, range: game.range });
+    return ({ world: game.world, range: game.range, color: game.color });
 }, function (dispatch) { return ({
     setCell: function (cell, alive) { return dispatch(actions_1.setCell(cell, alive)); }
 }); })(GameComponent);

@@ -23,11 +23,20 @@ var GameEvents = /** @class */ (function (_super) {
     function GameEvents() {
         var _this = _super.call(this) || this;
         _this._game = new game_1.Game(); // current state
-        _this._interval = setInterval(function () { return _this.tick(); }, 1000);
+        _this._speed = 1000;
+        _this._interval = setInterval(function () { return _this.tick(); }, _this._speed);
         _this.on('setcell', _this.setCell);
         _this.on('refresh', _this.refresh);
+        _this.on('speed', _this.setSpeed);
         return _this;
     }
+    Object.defineProperty(GameEvents.prototype, "speed", {
+        get: function () {
+            return this._speed;
+        },
+        enumerable: true,
+        configurable: true
+    });
     GameEvents.prototype.setCell = function (cell, isAlive) {
         this._game = this._game.setCell(cell, isAlive);
         this.refresh();
@@ -42,6 +51,11 @@ var GameEvents = /** @class */ (function (_super) {
     GameEvents.prototype.tick = function () {
         this._game = this._game.tick();
         this.refresh();
+    };
+    GameEvents.prototype.setSpeed = function (speed) {
+        var _this = this;
+        clearInterval(this._interval);
+        this._interval = setInterval(function () { return _this.tick(); }, speed);
     };
     return GameEvents;
 }(events_1.EventEmitter));

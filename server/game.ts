@@ -1,5 +1,6 @@
 import { World, WorldLookup, Cell } from "../models";
 import { cells, stringify, createLookup, range, lookupNeighbors, setCell } from "../common/world";
+import color from 'color';
 
 /**
  * Represents an instance of Conway's Game of Life game state.
@@ -51,20 +52,23 @@ export class Game {
             [...cells(this._world)]
             .map(cell => ({
                 cell,
-                neighbors: [...this.lookupNeighbors(cell)].length,
+                neighbors: [...this.lookupNeighbors(cell)],
                 isAlive: this._lookup(cell.x, cell.y)        
             }))
             .filter(({ neighbors, isAlive }) => {
                 if (isAlive) {
-                    if (underpopulated(neighbors)) return false;
-                    if (nextGeneration(neighbors)) return true;
-                    if (overpopulated(neighbors)) return false;
+                    if (underpopulated(neighbors.length)) return false;
+                    if (nextGeneration(neighbors.length)) return true;
+                    if (overpopulated(neighbors.length)) return false;
                 } else {
-                    if (reproduce(neighbors)) return true; 
+                    if (reproduce(neighbors.length)) return true; 
                 }
             })
-            .map(({cell}) => cell)
-        );
+            .map(({cell, neighbors}) => ({ 
+                x: cell.x,
+                y: cell.y,
+                color: reproduce(neighbors.length) ? neighbors.map(z => color(z.color)).reduce((c, y) => c.mix(y)).toString() : cell.color
+            })));
     }
 
     toString() {

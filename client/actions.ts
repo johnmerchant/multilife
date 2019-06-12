@@ -6,3 +6,8 @@ export const setCell = (cell: Cell, alive: boolean) => send({
     cell,
     alive
 });
+
+export const setSpeed = (speed: number) => send({
+    type: MessageType.Speed,
+    speed
+});

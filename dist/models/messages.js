@@ -4,6 +4,7 @@ var MessageType;
 (function (MessageType) {
     MessageType[MessageType["Update"] = 0] = "Update";
     MessageType[MessageType["SetCell"] = 1] = "SetCell";
+    MessageType[MessageType["Speed"] = 2] = "Speed";
 })(MessageType = exports.MessageType || (exports.MessageType = {}));
 function isUpdate(message) {
     return message.type === MessageType.Update;
@@ -13,3 +14,7 @@ function isSetCell(message) {
     return message.type === MessageType.SetCell;
 }
 exports.isSetCell = isSetCell;
+function isSpeed(message) {
+    return message.type === MessageType.Speed;
+}
+exports.isSpeed = isSpeed;

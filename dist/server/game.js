@@ -19,8 +19,12 @@ var __spread = (this && this.__spread) || function () {
     for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
     return ar;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var world_1 = require("../common/world");
+var color_1 = __importDefault(require("color"));
 /**
  * Represents an instance of Conway's Game of Life game state.
  */
@@ -66,27 +70,31 @@ var Game = /** @class */ (function () {
         var _this = this;
         return new Game(__spread(world_1.cells(this._world)).map(function (cell) { return ({
             cell: cell,
-            neighbors: __spread(_this.lookupNeighbors(cell)).length,
+            neighbors: __spread(_this.lookupNeighbors(cell)),
             isAlive: _this._lookup(cell.x, cell.y)
         }); })
             .filter(function (_a) {
             var neighbors = _a.neighbors, isAlive = _a.isAlive;
             if (isAlive) {
-                if (underpopulated(neighbors))
+                if (underpopulated(neighbors.length))
                     return false;
-                if (nextGeneration(neighbors))
+                if (nextGeneration(neighbors.length))
                     return true;
-                if (overpopulated(neighbors))
+                if (overpopulated(neighbors.length))
                     return false;
             }
             else {
-                if (reproduce(neighbors))
+                if (reproduce(neighbors.length))
                     return true;
             }
         })
             .map(function (_a) {
-            var cell = _a.cell;
-            return cell;
+            var cell = _a.cell, neighbors = _a.neighbors;
+            return ({
+                x: cell.x,
+                y: cell.y,
+                color: reproduce(neighbors.length) ? neighbors.map(function (z) { return color_1.default(z.color); }).reduce(function (c, y) { return c.mix(y); }).toString() : cell.color
+            });
         }));
     };
     Game.prototype.toString = function () {

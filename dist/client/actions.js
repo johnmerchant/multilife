@@ -7,3 +7,7 @@ exports.setCell = function (cell, alive) { return redux_websocket_1.send({
     cell: cell,
     alive: alive
 }); };
+exports.setSpeed = function (speed) { return redux_websocket_1.send({
+    type: models_1.MessageType.Speed,
+    speed: speed
+}); };

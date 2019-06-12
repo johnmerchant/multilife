@@ -17,6 +17,7 @@ var socket_1 = require("./socket");
 var world_1 = require("../../common/world");
 exports.initialState = {
     world: [],
+    color: '#000000',
     range: {
         min: { x: 0, y: 0 },
         max: { x: 0, y: 0 },
@@ -24,25 +25,27 @@ exports.initialState = {
 };
 exports.game = function (state, action) {
     if (state === void 0) { state = exports.initialState; }
-    var message;
     switch (action.type) {
+        // Receive
         case socket_1.WS_PREFIX + redux_websocket_1.WEBSOCKET_MESSAGE:
-            message = JSON.parse(action.payload.message);
-            switch (message.type) {
-                case models_1.MessageType.Update:
-                    var update = message;
-                    return __assign({}, state, { world: update.world, range: world_1.range(update.world), lookup: world_1.createLookup(update.world) });
-            }
-            break;
+            return handleMessage(state, JSON.parse(action.payload.message));
+        // Send
         case socket_1.WS_PREFIX + redux_websocket_1.WEBSOCKET_SEND:
-            message = action.payload;
-            switch (message.type) {
-                case models_1.MessageType.SetCell:
-                    var _a = message, cell = _a.cell, alive = _a.alive;
-                    var world = world_1.setCell(state.world, cell, alive);
-                    return __assign({}, state, { world: world, range: world_1.range(world) });
-            }
-            break;
+            return handleMessage(state, action.payload);
+    }
+    return __assign({}, state);
+};
+var handleMessage = function (state, message) {
+    if (models_1.isUpdate(message)) {
+        return __assign({}, state, { world: message.world, range: world_1.range(message.world), lookup: world_1.createLookup(message.world) });
+    }
+    if (models_1.isSetCell(message)) {
+        var cell = message.cell, alive = message.alive;
+        var world = world_1.setCell(state.world, cell, alive);
+        return __assign({}, state, { world: world, range: world_1.range(world) });
+    }
+    if (models_1.isSpeed(message)) {
+        return __assign({}, state, { speed: message.speed });
     }
     return __assign({}, state);
 };

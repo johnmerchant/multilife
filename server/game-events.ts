@@ -1,6 +1,7 @@
 import { Game } from "./game";
 import { EventEmitter } from "events";
 import { Cell } from "../models";
+import { thisTypeAnnotation } from "@babel/types";
 
 declare interface IGameEvents {
     on(event: 'update', listener: (state: Game) => void): this;
@@ -15,12 +16,18 @@ declare interface IGameEvents {
 export class GameEvents extends EventEmitter implements IGameEvents {
     
     private _game = new Game(); // current state
-    private _interval = setInterval(() => this.tick(), 1000);
+    private _speed: number = 1000;
+    private _interval = setInterval(() => this.tick(), this._speed);
+    
+    get speed() {
+        return this._speed;
+    }
 
     constructor() {
         super();
         this.on('setcell', this.setCell);
         this.on('refresh', this.refresh);
+        this.on('speed', this.setSpeed);
     }
 
     private setCell(cell: Cell, isAlive: boolean) {
@@ -40,5 +47,10 @@ export class GameEvents extends EventEmitter implements IGameEvents {
     private tick() {
         this._game = this._game.tick();
         this.refresh();
+    }
+
+    private setSpeed(speed: number) {
+        clearInterval(this._interval);
+        this._interval = setInterval(() => this.tick(), speed);
     }
 }

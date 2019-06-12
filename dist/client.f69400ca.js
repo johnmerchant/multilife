@@ -26677,6 +26677,7 @@ var MessageType;
 (function (MessageType) {
   MessageType[MessageType["Update"] = 0] = "Update";
   MessageType[MessageType["SetCell"] = 1] = "SetCell";
+  MessageType[MessageType["Speed"] = 2] = "Speed";
 })(MessageType = exports.MessageType || (exports.MessageType = {}));
 
 function isUpdate(message) {
@@ -26690,6 +26691,12 @@ function isSetCell(message) {
 }
 
 exports.isSetCell = isSetCell;
+
+function isSpeed(message) {
+  return message.type === MessageType.Speed;
+}
+
+exports.isSpeed = isSpeed;
 },{}],"../models/world.ts":[function(require,module,exports) {
 "use strict";
 
@@ -27129,6 +27136,7 @@ var world_1 = require("../../common/world");
 
 exports.initialState = {
   world: [],
+  color: '#000000',
   range: {
     min: {
       x: 0,
@@ -27146,40 +27154,42 @@ exports.game = function (state, action) {
     state = exports.initialState;
   }
 
-  var message;
-
   switch (action.type) {
+    // Receive
     case socket_1.WS_PREFIX + redux_websocket_1.WEBSOCKET_MESSAGE:
-      message = JSON.parse(action.payload.message);
-
-      switch (message.type) {
-        case models_1.MessageType.Update:
-          var update = message;
-          return __assign({}, state, {
-            world: update.world,
-            range: world_1.range(update.world),
-            lookup: world_1.createLookup(update.world)
-          });
-      }
-
-      break;
+      return handleMessage(state, JSON.parse(action.payload.message));
+    // Send
 
     case socket_1.WS_PREFIX + redux_websocket_1.WEBSOCKET_SEND:
-      message = action.payload;
+      return handleMessage(state, action.payload);
+  }
 
-      switch (message.type) {
-        case models_1.MessageType.SetCell:
-          var _a = message,
-              cell = _a.cell,
-              alive = _a.alive;
-          var world = world_1.setCell(state.world, cell, alive);
-          return __assign({}, state, {
-            world: world,
-            range: world_1.range(world)
-          });
-      }
+  return __assign({}, state);
+};
 
-      break;
+var handleMessage = function handleMessage(state, message) {
+  if (models_1.isUpdate(message)) {
+    return __assign({}, state, {
+      world: message.world,
+      range: world_1.range(message.world),
+      lookup: world_1.createLookup(message.world)
+    });
+  }
+
+  if (models_1.isSetCell(message)) {
+    var cell = message.cell,
+        alive = message.alive;
+    var world = world_1.setCell(state.world, cell, alive);
+    return __assign({}, state, {
+      world: world,
+      range: world_1.range(world)
+    });
+  }
+
+  if (models_1.isSpeed(message)) {
+    return __assign({}, state, {
+      speed: message.speed
+    });
   }
 
   return __assign({}, state);
@@ -29642,6 +29652,13 @@ exports.setCell = function (cell, alive) {
     alive: alive
   });
 };
+
+exports.setSpeed = function (speed) {
+  return redux_websocket_1.send({
+    type: models_1.MessageType.Speed,
+    speed: speed
+  });
+};
 },{"../models":"../models/index.ts","@giantmachines/redux-websocket":"../node_modules/@giantmachines/redux-websocket/dist/index.js"}],"components/Game.tsx":[function(require,module,exports) {
 "use strict";
 
@@ -29687,6 +29704,7 @@ var GameComponent = function GameComponent(_a) {
   var world = _a.world,
       range = _a.range,
       setCell = _a.setCell,
+      color = _a.color,
       width = _a.width,
       height = _a.height;
   var ref = react_1.useRef(null);
@@ -29701,7 +29719,6 @@ var GameComponent = function GameComponent(_a) {
       if (ctx) {
         ctx.fillStyle = '#FFFFFF';
         ctx.fillRect(0, 0, width * CELL_WIDTH, height * CELL_WIDTH);
-        ctx.fillStyle = '#000000';
 
         try {
           for (var world_1 = __values(world), world_1_1 = world_1.next(); !world_1_1.done; world_1_1 = world_1.next()) {
@@ -29732,32 +29749,32 @@ var GameComponent = function GameComponent(_a) {
       var x = event.clientX - rect.left;
       var y = event.clientY - rect.top;
       var cell = {
-        x: Math.round(x / CELL_WIDTH),
-        y: Math.round(y / CELL_HEIGHT)
+        x: Math.floor(x / CELL_WIDTH),
+        y: Math.floor(y / CELL_HEIGHT),
+        color: color
       };
       setCell(cell, true);
       var ctx = canvas.getContext('2d');
 
       if (ctx) {
-        ctx.fillStyle = '#000000';
-        drawCell(ctx, {
-          x: x,
-          y: y
-        });
+        ctx.fillStyle = color;
+        drawCell(ctx, cell);
       }
     }
   });
 };
 
 var drawCell = function drawCell(ctx, cell) {
-  return ctx.fillRect(cell.x * CELL_WIDTH, cell.y * CELL_HEIGHT, CELL_WIDTH, CELL_HEIGHT);
+  ctx.fillStyle = cell.color;
+  ctx.fillRect(cell.x * CELL_WIDTH, cell.y * CELL_HEIGHT, CELL_WIDTH, CELL_HEIGHT);
 };
 
 exports.Game = react_redux_1.connect(function (_a) {
   var game = _a.game;
   return {
     world: game.world,
-    range: game.range
+    range: game.range,
+    color: game.color
   };
 }, function (dispatch) {
   return {
@@ -29766,7 +29783,188 @@ exports.Game = react_redux_1.connect(function (_a) {
     }
   };
 })(GameComponent);
-},{"react":"../node_modules/react/index.js","react-redux":"../node_modules/react-redux/es/index.js","../actions":"actions.ts"}],"components/App.tsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-redux":"../node_modules/react-redux/es/index.js","../actions":"actions.ts"}],"../node_modules/use-debounce/lib/callback.js":[function(require,module,exports) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var react_1 = require("react");
+function useDebouncedCallback(callback, delay, options) {
+    if (options === void 0) { options = {}; }
+    var maxWait = options.maxWait;
+    var maxWaitHandler = react_1.useRef(null);
+    var maxWaitArgs = react_1.useRef([]);
+    var functionTimeoutHandler = react_1.useRef(null);
+    var isComponentUnmounted = react_1.useRef(false);
+    var debouncedFunction = callback;
+    var cancelDebouncedCallback = react_1.useCallback(function () {
+        clearTimeout(functionTimeoutHandler.current);
+        clearTimeout(maxWaitHandler.current);
+        maxWaitHandler.current = null;
+        maxWaitArgs.current = [];
+        functionTimeoutHandler.current = null;
+    }, []);
+    react_1.useEffect(function () { return function () {
+        // we use flag, as we allow to call callPending outside the hook
+        isComponentUnmounted.current = true;
+    }; }, []);
+    var debouncedCallback = react_1.useCallback(function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        maxWaitArgs.current = args;
+        clearTimeout(functionTimeoutHandler.current);
+        functionTimeoutHandler.current = setTimeout(function () {
+            cancelDebouncedCallback();
+            if (!isComponentUnmounted.current) {
+                debouncedFunction.apply(void 0, args);
+            }
+        }, delay);
+        if (maxWait && !maxWaitHandler.current) {
+            maxWaitHandler.current = setTimeout(function () {
+                var args = maxWaitArgs.current;
+                cancelDebouncedCallback();
+                if (!isComponentUnmounted.current) {
+                    debouncedFunction.apply(null, args);
+                }
+            }, maxWait);
+        }
+    }, [debouncedFunction, maxWait, delay, cancelDebouncedCallback]);
+    var callPending = function () {
+        // Call pending callback only if we have anything in our queue
+        if (!functionTimeoutHandler.current) {
+            return;
+        }
+        debouncedFunction.apply(null, maxWaitArgs.current);
+        cancelDebouncedCallback();
+    };
+    // At the moment, we use 3 args array so that we save backward compatibility
+    return [debouncedCallback, cancelDebouncedCallback, callPending];
+}
+exports.default = useDebouncedCallback;
+
+},{"react":"../node_modules/react/index.js"}],"../node_modules/use-debounce/lib/cache.js":[function(require,module,exports) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var react_1 = require("react");
+var callback_1 = require("./callback");
+function useDebounce(value, delay, options) {
+    var _a = react_1.useState(value), state = _a[0], dispatch = _a[1];
+    var _b = callback_1.default(react_1.useCallback(function (value) { return dispatch(value); }, []), delay, options), callback = _b[0], cancel = _b[1];
+    var previousValue = react_1.useRef(value);
+    react_1.useEffect(function () {
+        // We need to use this condition otherwise we will run debounce timer for the first render (including maxWait option)
+        if (previousValue.current !== value) {
+            callback(value);
+            previousValue.current = value;
+        }
+    }, [value, callback]);
+    return [state, cancel];
+}
+exports.default = useDebounce;
+
+},{"react":"../node_modules/react/index.js","./callback":"../node_modules/use-debounce/lib/callback.js"}],"../node_modules/use-debounce/lib/index.js":[function(require,module,exports) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var cache_1 = require("./cache");
+exports.useDebounce = cache_1.default;
+var callback_1 = require("./callback");
+exports.useDebouncedCallback = callback_1.default;
+
+},{"./cache":"../node_modules/use-debounce/lib/cache.js","./callback":"../node_modules/use-debounce/lib/callback.js"}],"components/Speed.tsx":[function(require,module,exports) {
+"use strict";
+
+var __read = this && this.__read || function (o, n) {
+  var m = typeof Symbol === "function" && o[Symbol.iterator];
+  if (!m) return o;
+  var i = m.call(o),
+      r,
+      ar = [],
+      e;
+
+  try {
+    while ((n === void 0 || n-- > 0) && !(r = i.next()).done) {
+      ar.push(r.value);
+    }
+  } catch (error) {
+    e = {
+      error: error
+    };
+  } finally {
+    try {
+      if (r && !r.done && (m = i["return"])) m.call(i);
+    } finally {
+      if (e) throw e.error;
+    }
+  }
+
+  return ar;
+};
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+  }
+  result["default"] = mod;
+  return result;
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var react_redux_1 = require("react-redux");
+
+var react_1 = __importStar(require("react"));
+
+var actions_1 = require("../actions");
+
+var use_debounce_1 = require("use-debounce");
+
+var SpeedComponent = function SpeedComponent(_a) {
+  var min = _a.min,
+      max = _a.max,
+      speed = _a.speed,
+      setSpeed = _a.setSpeed;
+
+  var _b = __read(react_1.useState(speed), 2),
+      state = _b[0],
+      setState = _b[1];
+
+  var _c = __read(use_debounce_1.useDebouncedCallback(function (value) {
+    return setState(value);
+  }, 100), 1),
+      setSpeedCallback = _c[0];
+
+  react_1.useEffect(function () {
+    if (state) {
+      setSpeed(state);
+    }
+  }, [state]);
+  return react_1.default.createElement("div", null, react_1.default.createElement("label", null, "Interval:"), react_1.default.createElement("span", null, speed, "ms"), react_1.default.createElement("input", {
+    type: "range",
+    min: min,
+    max: max,
+    defaultValue: String(state),
+    onChange: function onChange(event) {
+      return setSpeedCallback(parseInt(event.target.value));
+    }
+  }));
+};
+
+exports.Speed = react_redux_1.connect(function (state) {
+  return {
+    speed: state.game.speed
+  };
+}, function (dispatch) {
+  return {
+    setSpeed: function setSpeed(speed) {
+      return dispatch(actions_1.setSpeed(speed));
+    }
+  };
+})(SpeedComponent);
+},{"react-redux":"../node_modules/react-redux/es/index.js","react":"../node_modules/react/index.js","../actions":"actions.ts","use-debounce":"../node_modules/use-debounce/lib/index.js"}],"components/App.tsx":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -29793,6 +29991,8 @@ var react_1 = __importDefault(require("react"));
 
 var Game_1 = require("./Game");
 
+var Speed_1 = require("./Speed");
+
 var store = redux_1.createStore(reducers_1.reducer, redux_1.applyMiddleware(redux_websocket_1.default()));
 
 exports.App = function () {
@@ -29800,12 +30000,15 @@ exports.App = function () {
     store: store
   }, react_1.default.createElement(WebSocketConnection_1.WebSocketConnection, {
     url: "ws://localhost:5000/"
-  }, react_1.default.createElement("h1", null, "MultiLife!"), react_1.default.createElement(Game_1.Game, {
+  }, react_1.default.createElement("h1", null, "MultiLife!"), react_1.default.createElement(Speed_1.Speed, {
+    min: 100,
+    max: 500
+  }), react_1.default.createElement(Game_1.Game, {
     width: 800,
     height: 600
   })));
 };
-},{"redux":"../node_modules/redux/es/redux.js","../reducers":"reducers/index.ts","react-redux":"../node_modules/react-redux/es/index.js","@giantmachines/redux-websocket":"../node_modules/@giantmachines/redux-websocket/dist/index.js","./WebSocketConnection":"components/WebSocketConnection.tsx","react":"../node_modules/react/index.js","./Game":"components/Game.tsx"}],"index.tsx":[function(require,module,exports) {
+},{"redux":"../node_modules/redux/es/redux.js","../reducers":"reducers/index.ts","react-redux":"../node_modules/react-redux/es/index.js","@giantmachines/redux-websocket":"../node_modules/@giantmachines/redux-websocket/dist/index.js","./WebSocketConnection":"components/WebSocketConnection.tsx","react":"../node_modules/react/index.js","./Game":"components/Game.tsx","./Speed":"components/Speed.tsx"}],"index.tsx":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
