@@ -1,3 +1,6 @@
+import { World, WorldLookup, Cell } from "../models";
+import { cells, stringify, createLookup, range, lookupNeighbors, setCell } from "../common/world";
+
 /**
  * Represents an instance of Conway's Game of Life game state.
  */
@@ -20,16 +23,24 @@ export class Game {
      */
     constructor(world?: World) {
         this._world = world || [];
-        const lookup = new Set<string>(this._world.map(c => cellKey(c)));
-        this._lookup = (x, y) => lookup.has(cellKey({ x, y }));
+        this._lookup = createLookup(this._world);
     }
 
-    putCell(cell: Cell): Game {
-        if (this._lookup(cell.x, cell.y)) {
-            return this;
+    setCell(cell: Cell, isAlive: boolean): Game {
+        
+        if (this._lookup(cell.x, cell.y) === isAlive) {
+            return this; // no effect on state
         }
-        const nextWorld: World = [...this._world, cell];
-        return new Game(nextWorld);
+        
+        return new Game(setCell(this._world, cell, isAlive));
+    }
+
+    range() {
+        return range(this._world);
+    }
+
+    lookupNeighbors(cell: Cell): Cell[] {
+        return lookupNeighbors(cell, this._lookup);
     }
 
     /**
@@ -37,7 +48,7 @@ export class Game {
      */
     tick(): Game {
         return new Game(
-            [...this.cells()]
+            [...cells(this._world)]
             .map(cell => ({
                 cell,
                 neighbors: [...this.lookupNeighbors(cell)].length,
@@ -56,60 +67,8 @@ export class Game {
         );
     }
 
-    /**
-     * Iterates through all Cells in the World
-     */
-    *cells(): IterableIterator<Cell> {
-        let {min, max} = this.range();
-        for (let x = min.x; x <= max.x; ++x) {
-            for (let y = min.y; y <= max.y; ++y) {
-                yield {x, y};
-            }
-        }
-    }
-
-    /**
-     * Reduces the World state into the minimum and maximum known cooridnates of living Cells.
-     */
-    range() {
-        let {min, max} = this._world.reduce(({min, max}, cell) => ({ 
-            min: { x: cell.x < min.x ? cell.x : min.x, y: cell.y < min.y ? cell.y : min.y },
-            max: { x: cell.x > max.x ? cell.x : max.x, y: cell.y > max.y ? cell.y : max.y }
-        }), { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } });
-
-        // expand the edge of the world by 1 cell, this lets us detect dead cells on the edge
-        min.x--;
-        min.y--;
-        max.x++;
-        max.y++;
-
-        return {min, max};
-    }
-
-    lookupNeighbors(cell: Cell): Cell[] {
-        const neighbors: Cell[] = [
-            { x: cell.x-1, y: cell.y-1 },
-            { x: cell.x, y: cell.y-1 },
-            { x: cell.x+1, y: cell.y-1 },
-            { x: cell.x-1, y: cell.y },
-            { x: cell.x+1, y: cell.y },
-            { x: cell.x-1, y: cell.y+1 },
-            { x: cell.x, y: cell.y+1 },
-            { x: cell.x+1, y: cell.y+1 }
-        ];
-        return neighbors.filter(({x, y}) => this._lookup(x, y));
-    }
-
     toString() {
-        const {min, max} = this.range();
-        const stringBuilder: string[] = [];
-        for (let x = min.x; x <= max.x; ++x) {
-            for (let y = min.y; y <= max.y; ++y) {
-                stringBuilder.push(this._lookup(x, y) ? ' ⬛ ' : ' ⬜ ');
-            }
-            stringBuilder.push('\n');
-        }
-        return stringBuilder.join('');
+        return stringify(this._world, this._lookup);
     }
 }
 
@@ -117,4 +76,3 @@ const underpopulated = (neighbors: number) => neighbors < 2;
 const nextGeneration = (neighbors: number) => neighbors === 2 || neighbors === 3;
 const overpopulated = (neighbors: number) => neighbors > 2;
 const reproduce = (neighbors: number) => neighbors === 3;
-const cellKey = (cell: Cell) => `${cell.x}_${cell.y}`;

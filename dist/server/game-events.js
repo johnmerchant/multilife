@@ -22,24 +22,26 @@ var GameEvents = /** @class */ (function (_super) {
     __extends(GameEvents, _super);
     function GameEvents() {
         var _this = _super.call(this) || this;
-        _this._game = new game_1.Game();
+        _this._game = new game_1.Game(); // current state
         _this._interval = setInterval(function () { return _this.tick(); }, 1000);
-        _this.on('putcell', _this.putCell);
+        _this.on('setcell', _this.setCell);
         _this.on('refresh', _this.refresh);
         return _this;
     }
-    GameEvents.prototype.putCell = function (cell) {
-        this.emit('update', this._game = this._game.putCell(cell));
+    GameEvents.prototype.setCell = function (cell, isAlive) {
+        this._game = this._game.setCell(cell, isAlive);
+        this.refresh();
     };
     GameEvents.prototype.stop = function () {
         clearInterval(this._interval);
         this.emit('stop');
     };
     GameEvents.prototype.refresh = function () {
-        this.emit('update', this._game);
+        this.emit('update', this._game.world);
     };
     GameEvents.prototype.tick = function () {
-        this.emit('update', this._game = this._game.tick());
+        this._game = this._game.tick();
+        this.refresh();
     };
     return GameEvents;
 }(events_1.EventEmitter));

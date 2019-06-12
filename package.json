@@ -19,7 +19,9 @@
   "scripts": {
     "test": "jest",
     "build-client": "parcel build client/index.html",
-    "build-server": "tsc"
+    "dev-client": "parcel serve client/index.html",
+    "build-server": "tsc",
+    "dev-server": "npm run build-server && node dist/server"
   },
   "devDependencies": {
     "@types/express": "^4.17.0",

@@ -2,8 +2,7 @@ import * as http from 'http';
 import * as ws from 'ws';
 import express from 'express';
 import { GameEvents } from './game-events';
-import { Message, MessageType, PutCell, Update } from '../@types/messages';
-
+import { Update, MessageType, Message, SetCell, World } from '../models';
 export class Server {
 
     private app = express();
@@ -16,7 +15,8 @@ export class Server {
         this.httpServer = http.createServer(this.app);
         this.wsServer = new ws.Server({ server: this.httpServer });
         this.wsServer.on('connection', connection => {
-            connection.on('message', this.onMessage);
+            console.debug('client connected');
+            connection.on('message', (data: ws.Data) => this.onMessage(data));
             const updateHandler = (world: World) => {
                 const update: Update = {
                     type: MessageType.Update,
@@ -24,7 +24,7 @@ export class Server {
                 };
                 connection.send(JSON.stringify(update));
             };
-            this.events.on('update', updateHandler);
+            this.events.on('update', (world: World) => updateHandler(world));
             connection.on('close', () => this.events.off('update', updateHandler));
             this.events.emit('refresh');
         });
@@ -34,9 +34,10 @@ export class Server {
         try {
             const payload: Message = JSON.parse(String(data));
             switch (payload.type) {
-                case MessageType.PutCell:
-                    const putCell = payload as PutCell;
-                    this.events.emit('putcell', putCell.cell);
+                case MessageType.SetCell:
+                    const {cell, alive} = payload as SetCell;
+                    console.debug({cell, alive});
+                    this.events.emit('setcell', cell, alive);
                     break;
             }
         } catch (err) {
@@ -45,7 +46,20 @@ export class Server {
     }
 
     run() {
-        this.httpServer.listen(5000);
-        return new Promise((resolve) => this.httpServer.on('close', () => resolve()));
+        const promise = new Promise((resolve) => this.httpServer.on('close', () => resolve()));
+        this.httpServer.listen(5000, () => console.log('listening on 5000'));
+        return promise;
     }
+}
+
+if (typeof require !== 'undefined' && require.main === module) {
+    const server = new Server();
+    (async () => {
+        try {
+            console.log('starting server...');
+            await server.run();
+        } catch (err) {
+            console.error(err);
+        }
+    })();
 }

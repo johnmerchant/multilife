@@ -49,10 +49,22 @@ describe('glider', function () {
         { x: 1, y: 2 },
         { x: 2, y: 2 }
     ]);
-    console.log(game.toString());
     test('tick', function () {
         var tick1 = game.tick();
-        console.log(tick1.toString());
-        console.log(tick1.tick().toString());
+        expect(tick1.world).toEqual([
+            { x: 0, y: 1 },
+            { x: 1, y: 2 },
+            { x: 1, y: 3 },
+            { x: 2, y: 1 },
+            { x: 2, y: 2 }
+        ]);
+        var tick2 = tick1.tick();
+        expect(tick2.world).toEqual([
+            { x: 0, y: 2 },
+            { x: 1, y: 3 },
+            { x: 2, y: 1 },
+            { x: 2, y: 2 },
+            { x: 2, y: 3 }
+        ]);
     });
 });
