@@ -1,7 +1,6 @@
 import { Game } from "./game";
 import { EventEmitter } from "events";
 import { Cell } from "../models";
-import { thisTypeAnnotation } from "@babel/types";
 
 declare interface IGameEvents {
     on(event: 'update', listener: (state: Game) => void): this;
