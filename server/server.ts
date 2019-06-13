@@ -2,7 +2,8 @@ import * as http from 'http';
 import * as ws from 'ws';
 import express from 'express';
 import { GameEvents } from './game-events';
-import { Update, MessageType, Message, SetCell, World, Speed, Cell } from '../models';
+import { Update, MessageType, Message, SetCell, World, Speed, Cell, ColorMessage } from '../models';
+import color from 'color';
 
 export class Server {
 
@@ -17,6 +18,14 @@ export class Server {
         this._wsServer = new ws.Server({ server: this._httpServer });
         this._wsServer.on('connection', connection => {
             console.debug('client connected');
+
+            const connectionColor = color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).hex();
+            const colorMessage: ColorMessage = {
+                type: MessageType.Color,
+                color: connectionColor
+            };
+            connection.send(JSON.stringify(colorMessage));
+
             connection.on('message', (data: ws.Data) => this.onMessage(data));
             const updateHandler = (world: World) => {
                 const update: Update = {

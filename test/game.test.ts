@@ -1,5 +1,7 @@
 import {Game} from '../server/game';
 
+const color = '#FFFFFF';
+
 describe('neighbors', () => {
 
     /*
@@ -8,14 +10,14 @@ describe('neighbors', () => {
     XXX 
     */
     const game = new Game([
-        { x: -1, y: -1 },
-        { x: 0, y: -1 },
-        { x: 1, y: -1 },
-        { x: -1, y: 0 },
-        { x: 1, y: 0 },
-        { x: -1, y: 1 },
-        { x: 0, y: 1 },
-        { x: 1, y: 1 }
+        { x: -1, y: -1, color },
+        { x: 0, y: -1, color },
+        { x: 1, y: -1, color },
+        { x: -1, y: 0, color },
+        { x: 1, y: 0, color },
+        { x: -1, y: 1, color },
+        { x: 0, y: 1, color },
+        { x: 1, y: 1, color }
     ]);
     
 
@@ -33,9 +35,9 @@ describe('neighbors', () => {
     });
     
     test('createMap', () => {
-        expect(game.lookup(-1, -1)).toBe(true);
-        expect(game.lookup(-8, -2)).toBe(false);
-        expect(game.lookup(0, 1)).toBe(true);
+        expect(game.lookup({ x: -1, y: -1 })).toBe(true);
+        expect(game.lookup({ x: -8, y: -2 })).toBe(false);
+        expect(game.lookup({ x: 0, y: 1 })).toBe(true);
     });
 });
 
@@ -50,29 +52,29 @@ describe('glider', () => {
      ⬜  ⬜  ⬜  ⬜  ⬜
      */
     const game = new Game([
-        {x: 1, y: 0},
-        {x: 2, y: 1},
-        {x: 0, y: 2}, 
-        {x: 1, y: 2},
-        {x: 2, y: 2}
+        {x: 1, y: 0, color},
+        {x: 2, y: 1, color},
+        {x: 0, y: 2, color}, 
+        {x: 1, y: 2, color},
+        {x: 2, y: 2, color}
     ]);
 
     test('tick', () => {
         const tick1 = game.tick();
         expect(tick1.world).toEqual([
-            { x: 0, y: 1 },
-            { x: 1, y: 2 },
-            { x: 1, y: 3 },
-            { x: 2, y: 1 },
-            { x: 2, y: 2 }
+            { x: 0, y: 1, color },
+            { x: 1, y: 2, color },
+            { x: 1, y: 3, color },
+            { x: 2, y: 1, color },
+            { x: 2, y: 2, color }
         ]);
         const tick2 = tick1.tick();
         expect(tick2.world).toEqual([
-            { x: 0, y: 2 },
-            { x: 1, y: 3 },
-            { x: 2, y: 1 },
-            { x: 2, y: 2 },
-            { x: 2, y: 3 }
+            { x: 0, y: 2, color },
+            { x: 1, y: 3, color },
+            { x: 2, y: 1, color },
+            { x: 2, y: 2, color },
+            { x: 2, y: 3, color }
         ]);
     });
 

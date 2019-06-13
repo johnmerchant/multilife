@@ -3,7 +3,9 @@ export interface Point {
     y: number;
 }
 
-export type Cell = Point & { color: string; };
+export interface Cell extends Point { 
+    color: string; 
+};
 
 export interface Range {
     min: Point;

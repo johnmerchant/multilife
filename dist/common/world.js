@@ -52,12 +52,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @param world
  */
 function createLookup(world) {
-    var set = new Set(world.map(function (c) { return exports.encode(c); }));
-    return function (x, y) { return set.has(exports.encode({ x: x, y: y })); };
+    var set = new Map(world.map(function (c) { return [exports.encode(c), c]; }));
+    return function (p) { return set.get(exports.encode(p)); };
 }
 exports.createLookup = createLookup;
 /**
- * Returns the String representation of a Cell.
+ * Returns the String representation of a Point.
  */
 exports.encode = function (cell) { return cell.x + "," + cell.y; };
 /**
@@ -121,7 +121,7 @@ function stringify(world, lookup) {
     var stringBuilder = [];
     for (var x = min.x; x <= max.x; ++x) {
         for (var y = min.y; y <= max.y; ++y) {
-            stringBuilder.push(lookup(x, y) ? ' ⬛ ' : ' ⬜ ');
+            stringBuilder.push((typeof lookup({ x: x, y: y }) !== 'undefined') ? ' ⬛ ' : ' ⬜ ');
         }
         stringBuilder.push('\n');
     }
@@ -138,7 +138,7 @@ function toArray(world, lookup) {
     for (var y = min.y; y <= max.y; ++y) {
         var row = [];
         for (var x = min.x; x <= max.x; ++x) {
-            row.push(lookup(x, y));
+            row.push(typeof lookup({ x: x, y: y }) !== 'undefined');
         }
         grid.push(row);
     }
@@ -159,10 +159,7 @@ function lookupNeighbors(cell, lookup) {
         { x: cell.x, y: cell.y + 1 },
         { x: cell.x + 1, y: cell.y + 1 }
     ];
-    return neighbors.filter(function (_a) {
-        var x = _a.x, y = _a.y;
-        return lookup(x, y);
-    });
+    return neighbors.map(lookup).filter(function (c) { return typeof c !== 'undefined'; }).map(function (c) { return c; });
 }
 exports.lookupNeighbors = lookupNeighbors;
 exports.setCell = function (world, cell, alive) {

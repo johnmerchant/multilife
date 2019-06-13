@@ -15,6 +15,7 @@ var ws = __importStar(require("ws"));
 var express_1 = __importDefault(require("express"));
 var game_events_1 = require("./game-events");
 var models_1 = require("../models");
+var color_1 = __importDefault(require("color"));
 var Server = /** @class */ (function () {
     function Server() {
         var _this = this;
@@ -25,6 +26,12 @@ var Server = /** @class */ (function () {
         this._wsServer = new ws.Server({ server: this._httpServer });
         this._wsServer.on('connection', function (connection) {
             console.debug('client connected');
+            var connectionColor = color_1.default.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).hex();
+            var colorMessage = {
+                type: models_1.MessageType.Color,
+                color: connectionColor
+            };
+            connection.send(JSON.stringify(colorMessage));
             connection.on('message', function (data) { return _this.onMessage(data); });
             var updateHandler = function (world) {
                 var update = {
@@ -63,6 +70,7 @@ var Server = /** @class */ (function () {
                     var speed = payload.speed;
                     console.debug('speed: ' + speed);
                     this._events.emit('speed', speed);
+                    break;
             }
         }
         catch (err) {

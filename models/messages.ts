@@ -8,7 +8,8 @@ export interface Message {
 export enum MessageType {
     Update,
     SetCell,
-    Speed
+    Speed,
+    Color
 }
 
 export function isUpdate(message: Message): message is Update {
@@ -32,4 +33,12 @@ export function isSpeed(message: Message): message is Speed {
 }
 export interface Speed extends Message{
     speed: number;
+}
+
+export interface ColorMessage extends Message {
+    color: string;
+}
+
+export function isColor(message: Message): message is ColorMessage {
+    return message.type === MessageType.Color;
 }

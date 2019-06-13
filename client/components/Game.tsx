@@ -8,7 +8,7 @@ import { setCell } from '../actions';
 interface StateProps {
     world: World;
     range: Range;
-    color: string;
+    color?: string;
 }
 
 interface DispatchProps {
@@ -45,10 +45,12 @@ const GameComponent = ({ world, range, setCell, color, width, height }: Props) =
         width={width * CELL_WIDTH} 
         height={height * CELL_HEIGHT}
         onClick={(event) => {
+            if (!color) return; // we don't have a color from the server yet...
+
             const canvas = event.target as HTMLCanvasElement;
             const rect = canvas.getBoundingClientRect();
             const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
+            const y = event.clientY - rect.top; 
             const cell: Cell = { 
                 x: Math.floor(x / CELL_WIDTH),
                 y: Math.floor(y / CELL_HEIGHT),

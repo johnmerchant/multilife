@@ -17,7 +17,6 @@ var socket_1 = require("./socket");
 var world_1 = require("../../common/world");
 exports.initialState = {
     world: [],
-    color: '#000000',
     range: {
         min: { x: 0, y: 0 },
         max: { x: 0, y: 0 },
@@ -46,6 +45,9 @@ var handleMessage = function (state, message) {
     }
     if (models_1.isSpeed(message)) {
         return __assign({}, state, { speed: message.speed });
+    }
+    if (models_1.isColor(message)) {
+        return __assign({}, state, { color: message.color });
     }
     return __assign({}, state);
 };

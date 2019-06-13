@@ -1,23 +1,23 @@
-import { Cell, World, WorldLookup } from "../models";
+import { Cell, World, WorldLookup, Point } from "../models";
 
 /**
  * Creates a lookup of living Cells by location
  * @param world 
  */
 export function createLookup(world: World): WorldLookup {
-    const set = new Set<string>(world.map(c => encode(c)));
-    return (x, y) => set.has(encode({ x, y }));
+    const set = new Map<string, Cell>(world.map(c => [encode(c), c]));
+    return (p) => set.get(encode(p));
 }
 
 /**
- * Returns the String representation of a Cell.
+ * Returns the String representation of a Point.
  */
-export const encode = (cell: Cell) => `${cell.x},${cell.y}`;
+export const encode = (cell: Point) => `${cell.x},${cell.y}`;
 
 /**
  * Iterates through all Cells in the World
  */
-export function *cells(world: World): IterableIterator<Cell> {
+export function *cells(world: World): IterableIterator<Point> {
     let {min, max} = range(world);
     for (let x = min.x; x <= max.x; ++x) {
         for (let y = min.y; y <= max.y; ++y) {
@@ -29,7 +29,7 @@ export function *cells(world: World): IterableIterator<Cell> {
 /**
  * Reduces the World state into the minimum and maximum known cooridnates of living Cells.
  */
-export function range(world: World): { min: Cell, max: Cell } {
+export function range(world: World): { min: Point, max: Point } {
 
     // aggregate min and max coordinates
     let {min, max} = world.reduce(({min, max}, cell) => ({ 
@@ -54,7 +54,7 @@ export function stringify(world: World, lookup: WorldLookup = createLookup(world
     const stringBuilder: string[] = [];
     for (let x = min.x; x <= max.x; ++x) {
         for (let y = min.y; y <= max.y; ++y) {
-            stringBuilder.push(lookup(x, y) ? ' ⬛ ' : ' ⬜ ');
+            stringBuilder.push((typeof lookup({x, y}) !== 'undefined') ? ' ⬛ ' : ' ⬜ ');
         }
         stringBuilder.push('\n');
     }
@@ -70,7 +70,7 @@ export function toArray(world: World, lookup: WorldLookup = createLookup(world))
     for (let y = min.y; y <= max.y; ++y) {
         const row: boolean[] = [];
         for (let x = min.x; x <= max.x; ++x) {
-            row.push(lookup(x, y));
+            row.push(typeof lookup({x, y}) !== 'undefined');
         }
         grid.push(row);
     }
@@ -80,8 +80,8 @@ export function toArray(world: World, lookup: WorldLookup = createLookup(world))
 /**
  * Looks up a list of adjacent Cells
  */
-export function lookupNeighbors(cell: Cell, lookup: WorldLookup): Cell[] {
-    const neighbors: Cell[] = [
+export function lookupNeighbors(cell: Point, lookup: WorldLookup): Cell[] {
+    const neighbors: Point[] = [
         { x: cell.x-1, y: cell.y-1 },
         { x: cell.x, y: cell.y-1 },
         { x: cell.x+1, y: cell.y-1 },
@@ -91,7 +91,7 @@ export function lookupNeighbors(cell: Cell, lookup: WorldLookup): Cell[] {
         { x: cell.x, y: cell.y+1 },
         { x: cell.x+1, y: cell.y+1 }
     ];
-    return neighbors.filter(({x, y}) => lookup(x, y));
+    return neighbors.map(lookup).filter(c => typeof c !== 'undefined').map(c => c as Cell);
 }
 
 export const setCell = (world: World, cell: Cell, alive: boolean) => 

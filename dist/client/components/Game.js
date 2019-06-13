@@ -50,6 +50,8 @@ var GameComponent = function (_a) {
         }
     }, [ref, range, world]);
     return react_1.default.createElement("canvas", { ref: ref, width: width * CELL_WIDTH, height: height * CELL_HEIGHT, onClick: function (event) {
+            if (!color)
+                return; // we don't have a color from the server yet...
             var canvas = event.target;
             var rect = canvas.getBoundingClientRect();
             var x = event.clientX - rect.left;

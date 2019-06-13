@@ -1,19 +1,18 @@
 import { AnyAction, Reducer } from "redux";
-import { World, Message, MessageType, Update, SetCell, Range, WorldLookup, Speed, isUpdate, isSetCell, isSpeed } from "../../models";
+import { World, Message, MessageType, Update, SetCell, Range, WorldLookup, Speed, isUpdate, isSetCell, isSpeed, isColor } from "../../models";
 import { WEBSOCKET_MESSAGE, WEBSOCKET_SEND } from '@giantmachines/redux-websocket';
 import { WS_PREFIX } from "./socket";
 import { range, setCell, createLookup } from "../../common/world";
 
 export interface GameState {
     speed?: number;
-    color: string;
+    color?: string;
     world: World;
     range: Range;
 }
 
 export const initialState: GameState = {
     world: [],
-    color: '#000000',
     range: {
         min: { x: 0, y: 0 },
         max: { x: 0, y: 0 },
@@ -25,7 +24,6 @@ export const game: Reducer<GameState> = (state = initialState, action: AnyAction
         // Receive
         case WS_PREFIX + WEBSOCKET_MESSAGE:
             return handleMessage(state, JSON.parse(action.payload.message));
-
         // Send
         case WS_PREFIX + WEBSOCKET_SEND:
             return handleMessage(state, action.payload);
@@ -49,6 +47,9 @@ const handleMessage = (state: GameState, message: Message) => {
     }
     if (isSpeed(message)) {
         return {...state, speed: message.speed};
+    }
+    if (isColor(message)) {
+        return {...state, color: message.color};
     }
 
     return {...state};

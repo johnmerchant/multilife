@@ -52,7 +52,7 @@ var Game = /** @class */ (function () {
         configurable: true
     });
     Game.prototype.setCell = function (cell, isAlive) {
-        if (this._lookup(cell.x, cell.y) === isAlive) {
+        if ((typeof this._lookup(cell) !== 'undefined') === isAlive) {
             return this; // no effect on state
         }
         return new Game(world_1.setCell(this._world, cell, isAlive));
@@ -60,22 +60,22 @@ var Game = /** @class */ (function () {
     Game.prototype.range = function () {
         return world_1.range(this._world);
     };
-    Game.prototype.lookupNeighbors = function (cell) {
-        return world_1.lookupNeighbors(cell, this._lookup);
+    Game.prototype.lookupNeighbors = function (point) {
+        return world_1.lookupNeighbors(point, this._lookup);
     };
     /**
      * Gets the next instance of the Game of Life state
      */
     Game.prototype.tick = function () {
         var _this = this;
-        return new Game(__spread(world_1.cells(this._world)).map(function (cell) { return ({
-            cell: cell,
-            neighbors: __spread(_this.lookupNeighbors(cell)),
-            isAlive: _this._lookup(cell.x, cell.y)
+        return new Game(__spread(world_1.cells(this._world)).map(function (point) { return ({
+            point: point,
+            neighbors: __spread(_this.lookupNeighbors(point)),
+            cell: _this._lookup(point)
         }); })
             .filter(function (_a) {
-            var neighbors = _a.neighbors, isAlive = _a.isAlive;
-            if (isAlive) {
+            var neighbors = _a.neighbors, cell = _a.cell;
+            if (typeof cell !== 'undefined') {
                 if (underpopulated(neighbors.length))
                     return false;
                 if (nextGeneration(neighbors.length))
@@ -89,11 +89,13 @@ var Game = /** @class */ (function () {
             }
         })
             .map(function (_a) {
-            var cell = _a.cell, neighbors = _a.neighbors;
+            var cell = _a.cell, point = _a.point, neighbors = _a.neighbors;
             return ({
-                x: cell.x,
-                y: cell.y,
-                color: reproduce(neighbors.length) ? neighbors.map(function (z) { return color_1.default(z.color); }).reduce(function (c, y) { return c.mix(y); }).toString() : cell.color
+                x: point.x,
+                y: point.y,
+                color: reproduce(neighbors.length) || typeof cell === 'undefined'
+                    ? neighbors.map(function (z) { return color_1.default(z.color); }).reduce(function (x, y) { return x.mix(y); }).hex()
+                    : cell.color
             });
         }));
     };

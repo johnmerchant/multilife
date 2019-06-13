@@ -1,4 +1,4 @@
-import { World, WorldLookup, Cell } from "../models";
+import { World, WorldLookup, Cell, Point } from "../models";
 import { cells, stringify, createLookup, range, lookupNeighbors, setCell } from "../common/world";
 import color from 'color';
 
@@ -29,7 +29,7 @@ export class Game {
 
     setCell(cell: Cell, isAlive: boolean): Game {
         
-        if (this._lookup(cell.x, cell.y) === isAlive) {
+        if ((typeof this._lookup(cell) !== 'undefined') === isAlive) {
             return this; // no effect on state
         }
         
@@ -40,8 +40,8 @@ export class Game {
         return range(this._world);
     }
 
-    lookupNeighbors(cell: Cell): Cell[] {
-        return lookupNeighbors(cell, this._lookup);
+    lookupNeighbors(point: Point): Cell[] {
+        return lookupNeighbors(point, this._lookup);
     }
 
     /**
@@ -50,13 +50,13 @@ export class Game {
     tick(): Game {
         return new Game(
             [...cells(this._world)]
-            .map(cell => ({
-                cell,
-                neighbors: [...this.lookupNeighbors(cell)],
-                isAlive: this._lookup(cell.x, cell.y)        
+            .map(point => ({
+                point,
+                neighbors: [...this.lookupNeighbors(point)],
+                cell: this._lookup(point)        
             }))
-            .filter(({ neighbors, isAlive }) => {
-                if (isAlive) {
+            .filter(({ neighbors, cell }) => {
+                if (typeof cell !== 'undefined') {
                     if (underpopulated(neighbors.length)) return false;
                     if (nextGeneration(neighbors.length)) return true;
                     if (overpopulated(neighbors.length)) return false;
@@ -64,10 +64,12 @@ export class Game {
                     if (reproduce(neighbors.length)) return true; 
                 }
             })
-            .map(({cell, neighbors}) => ({ 
-                x: cell.x,
-                y: cell.y,
-                color: reproduce(neighbors.length) ? neighbors.map(z => color(z.color)).reduce((c, y) => c.mix(y)).toString() : cell.color
+            .map(({ cell, point, neighbors }) => ({ 
+                x: point.x,
+                y: point.y,
+                color: reproduce(neighbors.length) || typeof cell === 'undefined'
+                    ? neighbors.map(z => color(z.color)).reduce((x, y) => x.mix(y)).hex()
+                    : cell.color
             })));
     }
 
