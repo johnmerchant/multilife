@@ -23,6 +23,7 @@
     "build-client": "parcel build client/index.html",
     "dev-client": "parcel serve client/index.html",
     "build-server": "tsc",
+    "build": "npm run build-server && build-client",
     "dev-server": "npm run build-server && node dist/server"
   },
   "devDependencies": {

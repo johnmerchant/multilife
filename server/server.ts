@@ -56,6 +56,7 @@ export class Server {
                     const {speed} = payload as Speed;
                     console.debug('speed: ' + speed);
                     this._events.emit('speed', speed);
+                    break;
             }
         } catch (err) {
             console.error(err);
