@@ -169,3 +169,11 @@ exports.setCell = function (world, cell, alive) {
         return x !== cell.x || y !== cell.y;
     });
 };
+exports.colorRanking = function (world) {
+    return __spread(world
+        .map(function (_a) {
+        var color = _a.color;
+        return color;
+    })
+        .reduce(function (map, c) { return map.set(c, (map.get(c) || 0) + 1); }, new Map())).map(function (kvp) { return ({ color: kvp[0], count: kvp[1] }); });
+};

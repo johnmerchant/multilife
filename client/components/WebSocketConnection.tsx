@@ -20,6 +20,9 @@ type Props = DispatchProps & OwnProps & StateProps;
 const WebSocketConnectionComponent: FunctionComponent<Props> = ({ url, isConnected, connect, children }) => {
     // this ensures we are always connected, or trying to connect to the websocket endpoint!
     useEffect(() => { if (!isConnected) connect(url); }, [url, isConnected]);
+
+    if (!isConnected) return <span>Connecting...</span>;
+
     return <React.Fragment>{children}</React.Fragment>;
 };
 

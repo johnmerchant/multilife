@@ -1,4 +1,4 @@
-import { Cell, World, WorldLookup, Point } from "../models";
+import { Cell, World, WorldLookup, Point, ColorRanking } from "../models";
 
 /**
  * Creates a lookup of living Cells by location
@@ -94,7 +94,24 @@ export function lookupNeighbors(cell: Point, lookup: WorldLookup): Cell[] {
     return neighbors.map(lookup).filter(c => typeof c !== 'undefined').map(c => c as Cell);
 }
 
+/**
+ * Adds or removes a Cell from the World
+ * @param world 
+ * @param cell 
+ * @param alive 
+ */
 export const setCell = (world: World, cell: Cell, alive: boolean) => 
     alive
         ? [...world, cell]
         : [...world].filter(({x, y}) => x !== cell.x || y !== cell.y);
+
+/**
+ * Gets color ranking from a World
+ * @param world The World
+ */
+export const colorRanking = (world: World): ColorRanking => 
+    [...world
+        .map(({ color }) => color)
+        .reduce((map, c) => map.set(c, (map.get(c) || 0) + 1), new Map<string, number>())
+    ].map(kvp => ({ color: kvp[0], count: kvp[1] }))
+    .sort((x, y) => y.count - x.count);

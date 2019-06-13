@@ -1,22 +1,19 @@
 import { AnyAction, Reducer } from "redux";
-import { World, Message, MessageType, Update, SetCell, Range, WorldLookup, Speed, isUpdate, isSetCell, isSpeed, isColor } from "../../models";
+import { World, Message, Range, isUpdate, isSetCell, isSpeed, isColor, ColorRanking } from "../../models";
 import { WEBSOCKET_MESSAGE, WEBSOCKET_SEND } from '@giantmachines/redux-websocket';
 import { WS_PREFIX } from "./socket";
-import { range, setCell, createLookup } from "../../common/world";
+import { range, setCell, createLookup, colorRanking } from "../../common/world";
 
 export interface GameState {
     speed?: number;
     color?: string;
-    world: World;
-    range: Range;
+    colorRanking?: ColorRanking;
+    world?: World;
+    range?: Range;
 }
 
-export const initialState: GameState = {
-    world: [],
-    range: {
-        min: { x: 0, y: 0 },
-        max: { x: 0, y: 0 },
-    }
+export const initialState: GameState = { 
+
 };
 
 export const game: Reducer<GameState> = (state = initialState, action: AnyAction) => {
@@ -36,21 +33,26 @@ const handleMessage = (state: GameState, message: Message) => {
         return { 
             ...state, 
             world: message.world,
-            range: range(message.world),
-            lookup: createLookup(message.world)
+            ...reduceWorld(message.world)
          };
     }
     if (isSetCell(message)) {
         const {cell, alive} = message;
-        const world = setCell(state.world, cell, alive);
-        return { ...state, world, range: range(world) };
+        const world = setCell(state.world || [], cell, alive);
+        return { ...state, world, ...reduceWorld(world) };
     }
     if (isSpeed(message)) {
-        return {...state, speed: message.speed};
+        return {...state, speed: message.speed };
     }
     if (isColor(message)) {
-        return {...state, color: message.color};
+        return {...state, color: message.color };
     }
 
     return {...state};
 }
+
+const reduceWorld = (world: World) => ({
+    colorRanking: colorRanking(world),
+    range: range(world),
+    lookup: createLookup(world)
+});
