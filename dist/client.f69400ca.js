@@ -31815,15 +31815,15 @@ var store = redux_1.createStore(reducers_1.reducer, redux_1.applyMiddleware(redu
 exports.App = function () {
   return core_1.jsx(react_redux_1.Provider, {
     store: store
-  }, core_1.jsx("h1", null, "MultiLife!"), core_1.jsx(WebSocketConnection_1.WebSocketConnection, {
+  }, core_1.jsx("h1", null, "MultiLife!"), core_1.jsx("p", null, "Constructed with curiousity by ", core_1.jsx("a", {
+    href: "https://jmercha.github.io/"
+  }, "jmercha"), "."), core_1.jsx(WebSocketConnection_1.WebSocketConnection, {
     url: "ws://localhost:5000/"
   }, core_1.jsx("main", {
     css: styles_1.containerStyle
   }, core_1.jsx("aside", {
     css: styles_1.sidebarStyle
-  }, core_1.jsx(Colors_1.Colors, null)), core_1.jsx(Game_1.Game, null))), core_1.jsx("footer", null, "Constructed with curiousity by ", core_1.jsx("a", {
-    href: "https://jmercha.github.io/"
-  }, "jmercha"), "."));
+  }, core_1.jsx(Colors_1.Colors, null)), core_1.jsx(Game_1.Game, null))));
 };
 },{"@emotion/core":"../node_modules/@emotion/core/dist/core.browser.esm.js","redux":"../node_modules/redux/es/redux.js","../reducers":"reducers/index.ts","react-redux":"../node_modules/react-redux/es/index.js","@giantmachines/redux-websocket":"../node_modules/@giantmachines/redux-websocket/dist/index.js","./WebSocketConnection":"components/WebSocketConnection.tsx","./Game":"components/Game.tsx","./Colors":"components/Colors.tsx","../styles":"styles/index.tsx"}],"index.tsx":[function(require,module,exports) {
 "use strict";

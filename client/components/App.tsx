@@ -18,6 +18,7 @@ const store = createStore(
 export const App = () => 
     <Provider store={store}>
         <h1>MultiLife!</h1>
+        <p>Constructed with curiousity by <a href="https://jmercha.github.io/">jmercha</a>.</p>
         <WebSocketConnection url="ws://localhost:5000/">
             <main css={containerStyle}>
                 <aside css={sidebarStyle}>
@@ -26,7 +27,4 @@ export const App = () =>
                 <Game />
             </main>
         </WebSocketConnection>
-        <footer>
-            Constructed with curiousity by <a href="https://jmercha.github.io/">jmercha</a>.
-        </footer>
     </Provider>
