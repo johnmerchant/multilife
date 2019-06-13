@@ -1,7 +1,11 @@
-import React from 'react';
+/** @jsx jsx */
+import { jsx } from '@emotion/core';
+
+import { populationListStyle } from '../styles';
 import { ColorRanking } from "../../models";
 import { connect } from 'react-redux';
 import { State } from '../reducers';
+
 
 interface StateProps {
     colorRanking?: ColorRanking;
@@ -15,9 +19,9 @@ const ColorsComponent = ({ colorRanking, myColor }: Props) => {
 
     return <div>
         <h4>Population</h4>
-        <ol>
+        <ol css={populationListStyle}>
             {colorRanking.map(({ color, count }, i) => <li key={'k' + i}>
-                <span style={{display: 'inline-block', backgroundColor: color, width: '12px', height: '12px'}}></span>
+                <span style={{display: 'inline-block', boxShadow: '0 0 2px ' + color, backgroundColor: color, width: '12px', height: '12px'}}></span>
                 {name}
                 &nbsp;
                 {count}

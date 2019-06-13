@@ -1,5 +1,23 @@
 import {css} from '@emotion/core';
 
+export const globalStyle = css`
+    body {
+        font-family: 'Open Sans', sans-serif;
+        margin: 4rem;
+        color: #fff !important;
+        background-color: #000;
+        font-size: 1.2em;
+    }
+
+    * {
+        color: #fff;
+    }
+
+    html, body {
+        height: 100%;
+    }
+`;
+
 export const containerStyle = css`
     display: flex;
 `;
@@ -11,5 +29,8 @@ export const canvasContainerStyle = css`
 
 export const sidebarStyle = css`
     width: 8em;
-    background-color: #efefef;
+`;
+
+export const populationListStyle = css`
+    list-style: none;
 `;

@@ -24,8 +24,8 @@ interface OwnProps {
 
 type Props = StateProps & DispatchProps & OwnProps;
 
-const CELL_HEIGHT = 12;
-const CELL_WIDTH = 12;
+const CELL_HEIGHT = 14;
+const CELL_WIDTH = 14;
 
 const GameComponent = ({ world, range, setCell, color }: Props) => {
 
@@ -46,7 +46,7 @@ const GameComponent = ({ world, range, setCell, color }: Props) => {
 
             const ctx = canvas.getContext('2d');
             if (ctx) {
-                ctx.fillStyle = '#FFFFFF';
+                ctx.fillStyle = '#000'; // back out
                 ctx.fillRect(0, 0, canvas.width * CELL_WIDTH, canvas.height * CELL_WIDTH);
                 for (const cell of world) {
                     drawCell(ctx, cell);
@@ -84,6 +84,8 @@ const GameComponent = ({ world, range, setCell, color }: Props) => {
 
 const drawCell = (ctx: CanvasRenderingContext2D, cell: Cell) => {
     ctx.fillStyle = cell.color;
+    ctx.shadowBlur = 2;
+    ctx.shadowColor = cell.color;
     ctx.fillRect(cell.x * CELL_WIDTH, cell.y * CELL_HEIGHT, CELL_WIDTH, CELL_HEIGHT);
 }
 

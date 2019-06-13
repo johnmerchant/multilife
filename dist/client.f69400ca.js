@@ -31597,10 +31597,12 @@ Object.defineProperty(exports, "__esModule", {
 
 var core_1 = require("@emotion/core");
 
-exports.containerStyle = core_1.css(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n    display: flex;\n"], ["\n    display: flex;\n"])));
-exports.canvasContainerStyle = core_1.css(templateObject_2 || (templateObject_2 = __makeTemplateObject(["\n    flex-grow: 2;\n    border: 1px #000 solid;\n"], ["\n    flex-grow: 2;\n    border: 1px #000 solid;\n"])));
-exports.sidebarStyle = core_1.css(templateObject_3 || (templateObject_3 = __makeTemplateObject(["\n    width: 8em;\n    background-color: #efefef;\n"], ["\n    width: 8em;\n    background-color: #efefef;\n"])));
-var templateObject_1, templateObject_2, templateObject_3;
+exports.globalStyle = core_1.css(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n    body {\n        font-family: 'Open Sans', sans-serif;\n        margin: 4rem;\n        color: #fff !important;\n        background-color: #000;\n        font-size: 1.2em;\n    }\n\n    * {\n        color: #fff;\n    }\n\n    html, body {\n        height: 100%;\n    }\n"], ["\n    body {\n        font-family: 'Open Sans', sans-serif;\n        margin: 4rem;\n        color: #fff !important;\n        background-color: #000;\n        font-size: 1.2em;\n    }\n\n    * {\n        color: #fff;\n    }\n\n    html, body {\n        height: 100%;\n    }\n"])));
+exports.containerStyle = core_1.css(templateObject_2 || (templateObject_2 = __makeTemplateObject(["\n    display: flex;\n"], ["\n    display: flex;\n"])));
+exports.canvasContainerStyle = core_1.css(templateObject_3 || (templateObject_3 = __makeTemplateObject(["\n    flex-grow: 2;\n    border: 1px #000 solid;\n"], ["\n    flex-grow: 2;\n    border: 1px #000 solid;\n"])));
+exports.sidebarStyle = core_1.css(templateObject_4 || (templateObject_4 = __makeTemplateObject(["\n    width: 8em;\n"], ["\n    width: 8em;\n"])));
+exports.populationListStyle = core_1.css(templateObject_5 || (templateObject_5 = __makeTemplateObject(["\n    list-style: none;\n"], ["\n    list-style: none;\n"])));
+var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5;
 },{"@emotion/core":"../node_modules/@emotion/core/dist/core.browser.esm.js"}],"components/Game.tsx":[function(require,module,exports) {
 "use strict";
 
@@ -31634,8 +31636,8 @@ var actions_1 = require("../actions");
 
 var styles_1 = require("../styles");
 
-var CELL_HEIGHT = 12;
-var CELL_WIDTH = 12;
+var CELL_HEIGHT = 14;
+var CELL_WIDTH = 14;
 
 var GameComponent = function GameComponent(_a) {
   var world = _a.world,
@@ -31665,7 +31667,8 @@ var GameComponent = function GameComponent(_a) {
       var ctx = canvas.getContext('2d');
 
       if (ctx) {
-        ctx.fillStyle = '#FFFFFF';
+        ctx.fillStyle = '#000'; // back out
+
         ctx.fillRect(0, 0, canvas.width * CELL_WIDTH, canvas.height * CELL_WIDTH);
 
         try {
@@ -31718,6 +31721,8 @@ var GameComponent = function GameComponent(_a) {
 
 var drawCell = function drawCell(ctx, cell) {
   ctx.fillStyle = cell.color;
+  ctx.shadowBlur = 2;
+  ctx.shadowColor = cell.color;
   ctx.fillRect(cell.x * CELL_WIDTH, cell.y * CELL_HEIGHT, CELL_WIDTH, CELL_HEIGHT);
 };
 
@@ -31738,37 +31743,37 @@ exports.Game = react_redux_1.connect(function (_a) {
 },{"@emotion/core":"../node_modules/@emotion/core/dist/core.browser.esm.js","react":"../node_modules/react/index.js","react-redux":"../node_modules/react-redux/es/index.js","../actions":"actions.ts","../styles":"styles/index.tsx"}],"components/Colors.tsx":[function(require,module,exports) {
 "use strict";
 
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+/** @jsx jsx */
 
-var react_1 = __importDefault(require("react"));
+var core_1 = require("@emotion/core");
+
+var styles_1 = require("../styles");
 
 var react_redux_1 = require("react-redux");
 
 var ColorsComponent = function ColorsComponent(_a) {
   var colorRanking = _a.colorRanking,
       myColor = _a.myColor;
-  if (!colorRanking) return react_1.default.createElement("div", null);
-  return react_1.default.createElement("div", null, react_1.default.createElement("h4", null, "Population"), react_1.default.createElement("ol", null, colorRanking.map(function (_a, i) {
+  if (!colorRanking) return core_1.jsx("div", null);
+  return core_1.jsx("div", null, core_1.jsx("h4", null, "Population"), core_1.jsx("ol", {
+    css: styles_1.populationListStyle
+  }, colorRanking.map(function (_a, i) {
     var color = _a.color,
         count = _a.count;
-    return react_1.default.createElement("li", {
+    return core_1.jsx("li", {
       key: 'k' + i
-    }, react_1.default.createElement("span", {
+    }, core_1.jsx("span", {
       style: {
         display: 'inline-block',
+        boxShadow: '0 0 2px ' + color,
         backgroundColor: color,
         width: '12px',
         height: '12px'
       }
-    }), name, "\xA0", count, "\xA0", color === myColor ? react_1.default.createElement("em", null, "You") : null);
+    }), name, "\xA0", count, "\xA0", color === myColor ? core_1.jsx("em", null, "You") : null);
   })));
 };
 
@@ -31778,7 +31783,7 @@ exports.Colors = react_redux_1.connect(function (state) {
     myColor: state.game.color
   };
 })(ColorsComponent);
-},{"react":"../node_modules/react/index.js","react-redux":"../node_modules/react-redux/es/index.js"}],"components/App.tsx":[function(require,module,exports) {
+},{"@emotion/core":"../node_modules/@emotion/core/dist/core.browser.esm.js","../styles":"styles/index.tsx","react-redux":"../node_modules/react-redux/es/index.js"}],"components/App.tsx":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -31793,6 +31798,8 @@ Object.defineProperty(exports, "__esModule", {
 /** @jsx jsx */
 
 var core_1 = require("@emotion/core");
+
+var react_1 = __importDefault(require("react"));
 
 var redux_1 = require("redux");
 
@@ -31813,9 +31820,11 @@ var styles_1 = require("../styles");
 var store = redux_1.createStore(reducers_1.reducer, redux_1.applyMiddleware(redux_websocket_1.default()));
 
 exports.App = function () {
-  return core_1.jsx(react_redux_1.Provider, {
+  return core_1.jsx(react_1.default.Fragment, null, core_1.jsx(core_1.Global, {
+    styles: styles_1.globalStyle
+  }), core_1.jsx(react_redux_1.Provider, {
     store: store
-  }, core_1.jsx("h1", null, "MultiLife!"), core_1.jsx("p", null, "Constructed with curiousity by ", core_1.jsx("a", {
+  }, core_1.jsx("h1", null, "MultiLife!"), core_1.jsx("p", null, "Constructed with curiosity by ", core_1.jsx("a", {
     href: "https://jmercha.github.io/"
   }, "jmercha"), "."), core_1.jsx(WebSocketConnection_1.WebSocketConnection, {
     url: "ws://localhost:5000/"
@@ -31823,9 +31832,9 @@ exports.App = function () {
     css: styles_1.containerStyle
   }, core_1.jsx("aside", {
     css: styles_1.sidebarStyle
-  }, core_1.jsx(Colors_1.Colors, null)), core_1.jsx(Game_1.Game, null))));
+  }, core_1.jsx(Colors_1.Colors, null)), core_1.jsx(Game_1.Game, null)))));
 };
-},{"@emotion/core":"../node_modules/@emotion/core/dist/core.browser.esm.js","redux":"../node_modules/redux/es/redux.js","../reducers":"reducers/index.ts","react-redux":"../node_modules/react-redux/es/index.js","@giantmachines/redux-websocket":"../node_modules/@giantmachines/redux-websocket/dist/index.js","./WebSocketConnection":"components/WebSocketConnection.tsx","./Game":"components/Game.tsx","./Colors":"components/Colors.tsx","../styles":"styles/index.tsx"}],"index.tsx":[function(require,module,exports) {
+},{"@emotion/core":"../node_modules/@emotion/core/dist/core.browser.esm.js","react":"../node_modules/react/index.js","redux":"../node_modules/redux/es/redux.js","../reducers":"reducers/index.ts","react-redux":"../node_modules/react-redux/es/index.js","@giantmachines/redux-websocket":"../node_modules/@giantmachines/redux-websocket/dist/index.js","./WebSocketConnection":"components/WebSocketConnection.tsx","./Game":"components/Game.tsx","./Colors":"components/Colors.tsx","../styles":"styles/index.tsx"}],"index.tsx":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
