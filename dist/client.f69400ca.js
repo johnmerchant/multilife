@@ -31826,7 +31826,7 @@ exports.App = function () {
     store: store
   }, core_1.jsx("h1", null, "MultiLife!"), core_1.jsx("p", null, "Constructed with curiosity by ", core_1.jsx("a", {
     href: "https://jmercha.github.io/"
-  }, "jmercha"), "."), core_1.jsx(WebSocketConnection_1.WebSocketConnection, {
+  }, "jmercha"), ". \uD83E\uDD13"), core_1.jsx(WebSocketConnection_1.WebSocketConnection, {
     url: "ws://localhost:5000/"
   }, core_1.jsx("main", {
     css: styles_1.containerStyle
