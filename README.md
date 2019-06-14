@@ -1,7 +1,9 @@
 # MultiLife.live 
 [![CircleCI](https://circleci.com/gh/jmercha/multilife/tree/master.svg?style=svg)](https://circleci.com/gh/jmercha/multilife/tree/master)
 
-An experiment in collaborative cellular automata. A digital lava lamp.
+An experiment in realtime cellular automata. 
+
+Basically, an interactive multiplayer digital lava lamp.
 
 ## Dependencies
 
