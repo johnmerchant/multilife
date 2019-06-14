@@ -15,13 +15,7 @@ var models_1 = require("../../models");
 var redux_websocket_1 = require("@giantmachines/redux-websocket");
 var socket_1 = require("./socket");
 var world_1 = require("../../common/world");
-exports.initialState = {
-    world: [],
-    range: {
-        min: { x: 0, y: 0 },
-        max: { x: 0, y: 0 },
-    }
-};
+exports.initialState = {};
 exports.game = function (state, action) {
     if (state === void 0) { state = exports.initialState; }
     switch (action.type) {
@@ -36,12 +30,12 @@ exports.game = function (state, action) {
 };
 var handleMessage = function (state, message) {
     if (models_1.isUpdate(message)) {
-        return __assign({}, state, { world: message.world, range: world_1.range(message.world), lookup: world_1.createLookup(message.world) });
+        return __assign({}, state, { world: message.world }, reduceWorld(message.world));
     }
     if (models_1.isSetCell(message)) {
         var cell = message.cell, alive = message.alive;
-        var world = world_1.setCell(state.world, cell, alive);
-        return __assign({}, state, { world: world, range: world_1.range(world) });
+        var world = world_1.setCell(state.world || [], cell, alive);
+        return __assign({}, state, { world: world }, reduceWorld(world));
     }
     if (models_1.isSpeed(message)) {
         return __assign({}, state, { speed: message.speed });
@@ -51,3 +45,8 @@ var handleMessage = function (state, message) {
     }
     return __assign({}, state);
 };
+var reduceWorld = function (world) { return ({
+    colorRanking: world_1.colorRanking(world),
+    range: world_1.range(world),
+    lookup: world_1.createLookup(world)
+}); };

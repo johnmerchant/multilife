@@ -162,6 +162,12 @@ function lookupNeighbors(cell, lookup) {
     return neighbors.map(lookup).filter(function (c) { return typeof c !== 'undefined'; }).map(function (c) { return c; });
 }
 exports.lookupNeighbors = lookupNeighbors;
+/**
+ * Adds or removes a Cell from the World
+ * @param world
+ * @param cell
+ * @param alive
+ */
 exports.setCell = function (world, cell, alive) {
     return alive
         ? __spread(world, [cell]) : __spread(world).filter(function (_a) {
@@ -169,11 +175,16 @@ exports.setCell = function (world, cell, alive) {
         return x !== cell.x || y !== cell.y;
     });
 };
+/**
+ * Gets color ranking from a World
+ * @param world The World
+ */
 exports.colorRanking = function (world) {
     return __spread(world
         .map(function (_a) {
         var color = _a.color;
         return color;
     })
-        .reduce(function (map, c) { return map.set(c, (map.get(c) || 0) + 1); }, new Map())).map(function (kvp) { return ({ color: kvp[0], count: kvp[1] }); });
+        .reduce(function (map, c) { return map.set(c, (map.get(c) || 0) + 1); }, new Map())).map(function (kvp) { return ({ color: kvp[0], count: kvp[1] }); })
+        .sort(function (x, y) { return y.count - x.count; });
 };

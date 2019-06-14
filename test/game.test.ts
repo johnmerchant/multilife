@@ -35,9 +35,9 @@ describe('neighbors', () => {
     });
     
     test('createMap', () => {
-        expect(game.lookup({ x: -1, y: -1 })).toBe(true);
-        expect(game.lookup({ x: -8, y: -2 })).toBe(false);
-        expect(game.lookup({ x: 0, y: 1 })).toBe(true);
+        expect(game.lookup({ x: -1, y: -1 })).toBeTruthy();
+        expect(game.lookup({ x: -8, y: -2 })).toBeFalsy();
+        expect(game.lookup({ x: 0, y: 1 })).toBeTruthy();
     });
 });
 

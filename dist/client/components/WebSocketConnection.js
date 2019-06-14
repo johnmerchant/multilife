@@ -15,6 +15,8 @@ var WebSocketConnectionComponent = function (_a) {
     // this ensures we are always connected, or trying to connect to the websocket endpoint!
     react_1.useEffect(function () { if (!isConnected)
         connect(url); }, [url, isConnected]);
+    if (!isConnected)
+        return react_1.default.createElement("span", null, "Connecting...");
     return react_1.default.createElement(react_1.default.Fragment, null, children);
 };
 /**

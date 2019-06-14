@@ -19,7 +19,7 @@
     "ws": "^7.0.0"
   },
   "scripts": {
-    "test": "jest",
+    "test": "tsc && jest",
     "build-client": "parcel build client/index.html",
     "dev-client": "parcel serve client/index.html",
     "build-server": "tsc",
