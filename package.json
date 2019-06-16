@@ -13,6 +13,7 @@
     "express": "^4.17.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-github-corner": "^2.3.0",
     "react-redux": "^7.0.3",
     "redux": "^4.0.1",
     "use-debounce": "^2.1.0",

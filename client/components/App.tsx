@@ -9,6 +9,7 @@ import {WebSocketConnection} from './WebSocketConnection';
 import { Game } from './Game';
 import { Colors } from './Colors';
 import { globalStyle, containerStyle, sidebarStyle } from '../styles';
+import GithubCorner from 'react-github-corner';
 
 const store = createStore(
     reducer,
@@ -19,6 +20,13 @@ const socketUrl = `${window.location.protocol === 'https' ? 'wss' : 'ws'}://${wi
 
 export const App = () => <React.Fragment>
     <Global styles={globalStyle} />
+    <GithubCorner
+        href="https://github.com/jmercha/multilife"
+        bannerColor="#fff"
+        octoColor="#000"
+        size={80}
+        direction="right" 
+    />
     <Provider store={store}>
         <h1>MultiLife!</h1>
         <p>Constructed with curiosity by <a href="https://jmercha.github.io/">jmercha</a>. 🤓</p>
