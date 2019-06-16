@@ -33,7 +33,7 @@ jobs:
           destination: dist
       
       - add_ssh_keys:
-        fingerprints:
+          fingerprints:
             - "41:1e:8e:f2:26:fb:3f:73:cd:bc:69:79:7a:50:85:4c"
       - deploy:
           command: |
