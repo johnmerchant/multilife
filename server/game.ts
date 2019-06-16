@@ -70,7 +70,9 @@ export class Game {
                 color: reproduce(neighbors.length) || typeof cell === 'undefined'
                     ? neighbors.map(z => color(z.color)).reduce((x, y) => x.mix(y)).hex()
                     : cell.color
-            })));
+            }))
+            // prevent gliders and other naughty creatures maxing out memory and CPU
+            .filter(({ x, y }) => x > 0 && y > 0 && x < 100 && y < 100));
     }
 
     toString() {
