@@ -36,7 +36,7 @@ jobs:
       - deploy:
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              scp -o "StrictHostKeyChecking=no PreferredAuthentications=publickey" package.json yarn.lock $SSH_USER@$SSH_HOST:~/dist
-              scp -o "StrictHostKeyChecking=no PreferredAuthentications=publickey" -r dist $SSH_USER@$SSH_HOST:~/dist
-              ssh -o "StrictHostKeyChecking=no PreferredAuthentications=publickey" $SSH_USER@$SSH_HOST cp -R ~/dist/client /var/www/multilife.live/html/ && cd ~/dist && yarn && pm2 start ~/dist/process.yml
+              scp -o "StrictHostKeyChecking=no; PreferredAuthentications=publickey" package.json yarn.lock $SSH_USER@$SSH_HOST:~/dist
+              scp -o "StrictHostKeyChecking=no; PreferredAuthentications=publickey" -r dist $SSH_USER@$SSH_HOST:~/dist
+              ssh -o "StrictHostKeyChecking=no; PreferredAuthentications=publickey" $SSH_USER@$SSH_HOST cp -R ~/dist/client /var/www/multilife.live/html/ && cd ~/dist && yarn && pm2 start ~/dist/process.yml
             fi
