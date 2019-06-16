@@ -38,7 +38,7 @@ jobs:
       - deploy:
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              scp package.json yarn.lock $SSH_USER@$SSH_HOST:~/dist
+              scp -o "StrictHostKeyChecking=no" package.json yarn.lock $SSH_USER@$SSH_HOST:~/dist
               scp -r dist $SSH_USER@$SSH_HOST:~/dist
               ssh $SSH_USER@$SSH_HOST cp -R ~/dist/client /var/www/multilife.live/html/ && cd ~/dist && yarn && pm2 start ~/dist/process.yml
             fi
