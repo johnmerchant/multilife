@@ -6,13 +6,7 @@ version: 2
 jobs:
   build:
     docker:
-      # specify the version you desire here
       - image: circleci/node:12.3.1
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
 
     working_directory: ~/repo
 
@@ -22,28 +16,31 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
+            - yarn-packages-{{ checksum "yarn.lock" }}
 
-      - run: yarn install
+      - run: yarn install --frozen-lockfile
 
       - save_cache:
+          key: yarn-packages-{{ checksum "yarn.lock" }}
           paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+            - ~/.cache/yarn
 
       # run tests!
       - run: yarn test
+
+      - store_artifacts:
+          path: ~/repo/dist/
+          destination: dist
 
   deploy:
     machine:
       enabled: true
     steps:
+      - checkout
       - run:
           name: Deploy Over SSH
           command: |
-            scp package.json yarn.lock$SSH_USER@SSH_HOST:~/dist
+            scp package.json yarn.lock$SSH_USER@$SSH_HOST:~/dist
             scp -r dist $SSH_USER@$SSH_HOST:~/dist
             ssh $SSH_USER@$SSH_HOST cp -R ~/dist/client /var/www/multilife.live/html/ && cd ~/dist && yarn && pm2 start ~/dist/process.yml
 workflows:
