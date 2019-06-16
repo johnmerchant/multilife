@@ -1,19 +1,17 @@
 import * as http from 'http';
 import * as ws from 'ws';
-import express from 'express';
 import { GameEvents } from './game-events';
 import { Update, MessageType, Message, SetCell, World, Speed, Cell, ColorMessage } from '../models';
 import color from 'color';
 
 export class Server {
 
-    private _app = express();
     private _events = new GameEvents();
     private _httpServer: http.Server;
     private _wsServer: ws.Server;
 
     constructor() {
-        this._httpServer = http.createServer(this._app);
+        this._httpServer = http.createServer();
         this._wsServer = new ws.Server({ server: this._httpServer });
         this._wsServer.on('connection', connection => {
             console.debug('client connected');
@@ -74,7 +72,7 @@ export class Server {
 
     run() {
         const promise = new Promise((resolve) => this._httpServer.on('close', () => resolve()));
-        this._httpServer.listen('localhost', 5000, () => console.log('listening on localhost 5000'));
+        this._httpServer.listen(5000, 'localhost', () => console.log('listening on localhost 5000'));
         return promise;
     }
 }
