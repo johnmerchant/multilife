@@ -16,7 +16,7 @@ const store = createStore(
     applyMiddleware(createMiddleware())
 );
 
-const socketUrl = `${window.location.protocol === 'https' ? 'wss' : 'ws'}://${window.location.hostname}${window.location.hostname === 'localhost' ? ':5000' : '/ws' }`;
+const socketUrl = `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.hostname}${window.location.hostname === 'localhost' ? ':5000' : '/ws' }`;
 
 export const App = () => <React.Fragment>
     <Global styles={globalStyle} />
