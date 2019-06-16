@@ -5,6 +5,8 @@ An experiment in realtime cellular automata.
 
 Basically, an interactive multiplayer digital lava lamp.
 
+![](https://media.giphy.com/media/VEVoTlZHQlqKVHWgsu/source.gif)
+
 ## Dependencies
 
 * Node.js v12
@@ -22,3 +24,4 @@ Game state is managed server side, and events are pushed live between clients an
 
 * `yarn dev-server` - builds and starts the server
 * `yarn dev-client` - builds and starts the frontend
+
