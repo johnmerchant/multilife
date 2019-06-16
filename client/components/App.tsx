@@ -9,6 +9,7 @@ import { Game } from './Game';
 import { Colors } from './Colors';
 import { globalStyle, appStyle, containerStyle, sidebarStyle } from '../styles';
 import GithubCorner from 'react-github-corner';
+import { Welcome } from './Welcome';
 
 const store = createStore(
     reducer,
@@ -30,6 +31,7 @@ export const App = () => <div css={appStyle}>
         <h1>MultiLife!</h1>
         <p>Constructed with curiosity by <a href="https://jmercha.github.io/">jmercha</a>. 🤓</p>
         <WebSocketConnection url={socketUrl}>
+            <Welcome />
             <main css={containerStyle}>
                 <aside css={sidebarStyle}>
                     <Colors />
