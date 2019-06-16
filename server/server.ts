@@ -13,7 +13,6 @@ export class Server {
     private _wsServer: ws.Server;
 
     constructor() {
-        this._app.use(express.static('static'));
         this._httpServer = http.createServer(this._app);
         this._wsServer = new ws.Server({ server: this._httpServer });
         this._wsServer.on('connection', connection => {
@@ -75,7 +74,7 @@ export class Server {
 
     run() {
         const promise = new Promise((resolve) => this._httpServer.on('close', () => resolve()));
-        this._httpServer.listen(5000, () => console.log('listening on 5000'));
+        this._httpServer.listen('localhost', 5000, () => console.log('listening on localhost 5000'));
         return promise;
     }
 }
