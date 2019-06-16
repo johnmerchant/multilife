@@ -19,7 +19,8 @@ export class Server {
         this._wsServer.on('connection', connection => {
             console.debug('client connected');
 
-            const connectionColor = color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).hex();
+            const connectionColor = color.hsl(rand(0, 360), rand(80, 100), rand(40, 85)).hex();
+
             const colorMessage: ColorMessage = {
                 type: MessageType.Color,
                 color: connectionColor
@@ -78,3 +79,5 @@ export class Server {
         return promise;
     }
 }
+
+const rand = (min: number, max: number): number => Math.random() * (max - min) + min;

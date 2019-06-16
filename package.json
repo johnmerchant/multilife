@@ -24,9 +24,9 @@
     "clean": "rimraf dist/",
     "build-client": "parcel build client/index.html --out-dir dist/client",
     "dev-client": "parcel serve client/index.html --out-dir dist/client",
-    "build-server": "tsc --outDir dist/server && cp process.yml dist/server/",
+    "build-server": "tsc --outDir dist/server && cpx process.yml dist/server/",
     "build": "npm run clean && npm run build-server && npm run build-client",
-    "dev-server": "npm run clean && npm run build-server && node dist/server"
+    "dev-server": "npm run clean && npm run build-server && node dist/server/server"
   },
   "devDependencies": {
     "@types/color": "^3.0.0",
