@@ -28,7 +28,7 @@ export const canvasContainerStyle = css`
 `;
 
 export const sidebarStyle = css`
-    width: 8em;
+    width: 12em;
 `;
 
 export const populationListStyle = css`

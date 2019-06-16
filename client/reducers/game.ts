@@ -2,11 +2,12 @@ import { AnyAction, Reducer } from "redux";
 import { World, Message, Range, isUpdate, isSetCell, isSpeed, isColor, ColorRanking } from "../../models";
 import { WEBSOCKET_MESSAGE, WEBSOCKET_SEND } from '@giantmachines/redux-websocket';
 import { WS_PREFIX } from "./socket";
-import { range, setCell, createLookup, colorRanking } from "../../common/world";
+import { range, setCell, createLookup, colorRanking, colorName } from "../../common/world";
 
 export interface GameState {
     speed?: number;
     color?: string;
+    colorName?: string;
     colorRanking?: ColorRanking;
     world?: World;
     range?: Range;
@@ -45,7 +46,7 @@ const handleMessage = (state: GameState, message: Message) => {
         return {...state, speed: message.speed };
     }
     if (isColor(message)) {
-        return {...state, color: message.color };
+        return {...state, color: message.color, colorName: colorName(message.color) };
     }
 
     return {...state};

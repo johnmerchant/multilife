@@ -1,4 +1,6 @@
+import colorNamer from 'color-namer';
 import { Cell, World, WorldLookup, Point, ColorRanking } from "../models";
+
 
 /**
  * Creates a lookup of living Cells by location
@@ -111,7 +113,17 @@ export const setCell = (world: World, cell: Cell, alive: boolean) =>
  */
 export const colorRanking = (world: World): ColorRanking => 
     [...world
-        .map(({ color }) => color)
-        .reduce((map, c) => map.set(c, (map.get(c) || 0) + 1), new Map<string, number>())
-    ].map(kvp => ({ color: kvp[0], count: kvp[1] }))
+        .map(({ color }) => ({ color, name: colorName(color) }))
+        .reduce((map, {color, name}) => {
+            let data = map.get(name);
+            if (data) {
+                data.count += 1;
+            } else {
+                data = {color, count: 1};
+            }
+            return map.set(name, data);
+        }, new Map<string, { color: string, count: number }>())
+    ].map(kvp => ({ name: kvp[0], ...kvp[1] }))
     .sort((x, y) => y.count - x.count);
+
+export const colorName = (color: string) => colorNamer(color, { pick: ['basic'] }).basic[0].name;

@@ -20,18 +20,18 @@ const ColorsComponent = ({ colorRanking, myColor }: Props) => {
     return <div>
         <h4>Population</h4>
         <ol css={populationListStyle}>
-            {colorRanking.map(({ color, count }, i) => <li key={'k' + i}>
+            {colorRanking.map(({ color, name, count }, i) => <li key={'k' + i}>
                 <span style={{display: 'inline-block', boxShadow: '0 0 2px ' + color, backgroundColor: color, width: '12px', height: '12px'}}></span>
                 {name}
                 &nbsp;
                 {count}
                 &nbsp;
-                {color === myColor ? <em>You</em> : null}
+                {name === myColor ? <em>You</em> : null}
             </li>)}
         </ol>
     </div>
 };
 
 export const Colors = connect(
-    (state: State) => ({ colorRanking: state.game.colorRanking, myColor: state.game.color })
+    (state: State) => ({ colorRanking: state.game.colorRanking, myColor: state.game.colorName })
 )(ColorsComponent);
