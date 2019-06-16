@@ -9,6 +9,10 @@ export const globalStyle = css`
         font-size: 1.2em;
     }
 
+    #app {
+        height: 100%;
+    }
+
     * {
         color: #fff;
     }
@@ -20,6 +24,7 @@ export const globalStyle = css`
 
 export const containerStyle = css`
     display: flex;
+    height: 100%;
 `;
 
 export const canvasContainerStyle = css`
@@ -33,4 +38,8 @@ export const sidebarStyle = css`
 
 export const populationListStyle = css`
     list-style: none;
+`;
+
+export const appStyle = css`
+    height: 100%;
 `;

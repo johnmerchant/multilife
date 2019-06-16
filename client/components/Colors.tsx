@@ -22,6 +22,7 @@ const ColorsComponent = ({ colorRanking, myColor }: Props) => {
         <ol css={populationListStyle}>
             {colorRanking.map(({ color, name, count }, i) => <li key={'k' + i}>
                 <span style={{display: 'inline-block', boxShadow: '0 0 2px ' + color, backgroundColor: color, width: '12px', height: '12px'}}></span>
+                &nbsp;
                 {name}
                 &nbsp;
                 {count}

@@ -1,6 +1,5 @@
 /** @jsx jsx */
 import { jsx, Global } from '@emotion/core';
-import React from 'react'
 import {createStore, applyMiddleware} from 'redux';
 import {reducer} from '../reducers';
 import {Provider} from 'react-redux';
@@ -8,7 +7,7 @@ import createMiddleware  from '@giantmachines/redux-websocket';
 import {WebSocketConnection} from './WebSocketConnection';
 import { Game } from './Game';
 import { Colors } from './Colors';
-import { globalStyle, containerStyle, sidebarStyle } from '../styles';
+import { globalStyle, appStyle, containerStyle, sidebarStyle } from '../styles';
 import GithubCorner from 'react-github-corner';
 
 const store = createStore(
@@ -18,7 +17,7 @@ const store = createStore(
 
 const socketUrl = `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.hostname}${window.location.hostname === 'localhost' ? ':5000' : '/ws' }`;
 
-export const App = () => <React.Fragment>
+export const App = () => <div css={appStyle}>
     <Global styles={globalStyle} />
     <GithubCorner
         href="https://github.com/jmercha/multilife"
@@ -39,4 +38,4 @@ export const App = () => <React.Fragment>
             </main>
         </WebSocketConnection>
     </Provider>
-</React.Fragment>;
+</div>;
