@@ -31,7 +31,8 @@ jobs:
       - store_artifacts:
           path: ~/repo/dist/
           destination: dist
-
+      
+      - add_ssh_keys
       - deploy:
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
