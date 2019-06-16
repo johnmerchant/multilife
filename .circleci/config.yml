@@ -35,3 +35,25 @@ jobs:
 
       # run tests!
       - run: yarn test
+
+  deploy:
+    machine:
+      enabled: true
+    steps:
+      - run:
+          name: Deploy Over SSH
+          command: |
+            scp package.json yarn.lock$SSH_USER@SSH_HOST:~/dist
+            scp -r dist $SSH_USER@$SSH_HOST:~/dist
+            ssh $SSH_USER@$SSH_HOST cp -R ~/dist/client /var/www/multilife.live/html/ && cd ~/dist && yarn && pm2 start ~/dist/process.yml
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master

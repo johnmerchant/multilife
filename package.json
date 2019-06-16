@@ -20,11 +20,12 @@
   },
   "scripts": {
     "test": "tsc && jest",
-    "build-client": "parcel build client/index.html",
-    "dev-client": "parcel serve client/index.html",
-    "build-server": "tsc",
-    "build": "npm run build-server && build-client",
-    "dev-server": "npm run build-server && node dist/server"
+    "clean": "rimraf dist/",
+    "build-client": "parcel build client/index.html --out-dir dist/client",
+    "dev-client": "parcel serve client/index.html --out-dir dist/client",
+    "build-server": "tsc --outDir dist/server && cp process.yml dist/server/",
+    "build": "npm run clean && npm run build-server && npm run build-client",
+    "dev-server": "npm run clean && npm run build-server && node dist/server"
   },
   "devDependencies": {
     "@types/color": "^3.0.0",
@@ -35,8 +36,10 @@
     "@types/react-dom": "^16.8.4",
     "@types/react-redux": "^7.0.9",
     "@types/ws": "^6.0.1",
+    "cpx": "^1.5.0",
     "jest": "^24.8.0",
     "parcel": "^1.12.3",
+    "rimraf": "^2.6.3",
     "ts-jest": "^24.0.2",
     "typescript": "^3.5.1"
   }
