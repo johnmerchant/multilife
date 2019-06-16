@@ -25,12 +25,8 @@ jobs:
           paths:
             - ~/.cache/yarn
 
-      # run tests!
       - run: yarn test
-
-      - store_artifacts:
-          path: ~/repo/dist/
-          destination: dist
+      - run: yarn build
       
       - add_ssh_keys:
           fingerprints:
@@ -39,6 +35,6 @@ jobs:
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               scp -o "StrictHostKeyChecking=no" package.json yarn.lock $SSH_USER@$SSH_HOST:/home/multilife/dist
-              scp -r dist $SSH_USER@$SSH_HOST:/home/multilife/dist
+              scp -r dist/* $SSH_USER@$SSH_HOST:/home/multilife/dist
               ssh $SSH_USER@$SSH_HOST cd /home/multilife/dist && cp -R client/* /var/www/multilife.live/html && yarn && pm2 start process.yml
             fi
