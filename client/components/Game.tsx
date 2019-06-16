@@ -46,7 +46,7 @@ const GameComponent = ({ world, range, setCell, color }: Props) => {
 
             const ctx = canvas.getContext('2d');
             if (ctx) {
-                ctx.fillStyle = '#000'; // back out
+                ctx.fillStyle = '#000'; // black out
                 ctx.fillRect(0, 0, canvas.width * CELL_WIDTH, canvas.height * CELL_WIDTH);
                 for (const cell of world) {
                     drawCell(ctx, cell);
