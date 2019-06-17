@@ -11,3 +11,5 @@ export const setSpeed = (speed: number) => send({
     type: MessageType.Speed,
     speed
 });
+
+export const newColor = () => send({ type: MessageType.NewColor });

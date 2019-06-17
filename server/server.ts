@@ -2,7 +2,7 @@ import * as http from 'http';
 import * as ws from 'ws';
 import { GameEvents } from './game-events';
 import { Update, MessageType, Message, SetCell, World, Speed, Cell, ColorMessage } from '../models';
-import color from 'color';
+import {randomColor} from '../common/color';
 
 export class Server {
 
@@ -16,15 +16,34 @@ export class Server {
         this._wsServer.on('connection', connection => {
             console.debug('client connected');
 
-            const connectionColor = color.hsl(rand(0, 360), rand(80, 100), rand(40, 85)).hex();
-
-            const colorMessage: ColorMessage = {
-                type: MessageType.Color,
-                color: connectionColor
+            const sendColor = () => {
+                const color = randomColor();
+                const colorMessage: ColorMessage = {
+                    type: MessageType.Color,
+                    color
+                };
+                connection.send(JSON.stringify(colorMessage));
+                return color;
             };
-            connection.send(JSON.stringify(colorMessage));
+            let connectionColor = sendColor();
 
-            connection.on('message', (data: ws.Data) => this.onMessage(data));
+            connection.on('message', (data: ws.Data) => {
+                try {
+                    const payload: Message = JSON.parse(String(data));
+                    switch (payload.type) {
+                        case MessageType.SetCell:
+                            const {cell, alive} = payload as SetCell;
+                            console.debug({cell, alive});
+                            this._events.emit('setcell', { ...cell, color: connectionColor }, alive);
+                            break;
+                        case MessageType.NewColor:
+                            connectionColor = sendColor();
+                            break;
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+            });
             const updateHandler = (world: World) => {
                 const update: Update = {
                     type: MessageType.Update,
@@ -36,38 +55,13 @@ export class Server {
                 const setCell: SetCell = { type: MessageType.SetCell, cell, alive };
                 connection.send(JSON.stringify(setCell));
             };
-            const speedHandler = (speed: number) => {
-                const speedMsg: Speed = { type: MessageType.Speed, speed };
-                connection.send(JSON.stringify(speedMsg));
-            };
             this._events.on('update', (world: World) => updateHandler(world));
             connection.on('close', () => { 
                 this._events.off('update', updateHandler);
                 this._events.off('setcell', setCellHandler);
-                this._events.off('speed', speedHandler);
             });
             this._events.emit('refresh');
         });
-    }
-
-    private onMessage(data: ws.Data) {
-        try {
-            const payload: Message = JSON.parse(String(data));
-            switch (payload.type) {
-                case MessageType.SetCell:
-                    const {cell, alive} = payload as SetCell;
-                    console.debug({cell, alive});
-                    this._events.emit('setcell', cell, alive);
-                    break;
-                case MessageType.Speed:
-                    const {speed} = payload as Speed;
-                    console.debug('speed: ' + speed);
-                    this._events.emit('speed', speed);
-                    break;
-            }
-        } catch (err) {
-            console.error(err);
-        }
     }
 
     run() {
@@ -76,5 +70,3 @@ export class Server {
         return promise;
     }
 }
-
-const rand = (min: number, max: number): number => Math.random() * (max - min) + min;

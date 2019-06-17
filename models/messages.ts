@@ -9,29 +9,28 @@ export enum MessageType {
     Update,
     SetCell,
     Speed,
-    Color
+    Color,
+    NewColor
 }
 
-export function isUpdate(message: Message): message is Update {
-    return message.type === MessageType.Update;
-}
+export const isUpdate = (message: Message): message is Update => 
+    message.type === MessageType.Update;
 
 export interface Update extends Message {
     world: World;
 }
 
-export function isSetCell(message: Message): message is SetCell {
-    return message.type === MessageType.SetCell;
-}
+export const isSetCell = (message: Message): message is SetCell =>
+    message.type === MessageType.SetCell;
+
 export interface SetCell extends Message {
     cell: Cell;
     alive: boolean;
 }
 
-export function isSpeed(message: Message): message is Speed {
-    return message.type === MessageType.Speed;
-}
-export interface Speed extends Message{
+export const isSpeed = (message: Message): message is Speed =>
+    message.type === MessageType.Speed;
+export interface Speed extends Message {
     speed: number;
 }
 
@@ -39,6 +38,10 @@ export interface ColorMessage extends Message {
     color: string;
 }
 
-export function isColor(message: Message): message is ColorMessage {
-    return message.type === MessageType.Color;
-}
+export const isColor = (message: Message): message is ColorMessage => 
+    message.type === MessageType.Color;
+
+export interface NewColorMessage extends Message { }
+
+export const isNewColor = (message: Message): message is NewColorMessage =>
+    message.type === MessageType.NewColor;

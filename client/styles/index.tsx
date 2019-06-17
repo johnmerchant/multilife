@@ -43,3 +43,11 @@ export const populationListStyle = css`
 export const appStyle = css`
     height: 100%;
 `;
+
+export const colorNameCss = css`
+    font-weight: bold;
+    :hover {
+        cursor: pointer;
+        text-decoration: underline;
+    }
+`;
