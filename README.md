@@ -10,6 +10,7 @@ Basically, an interactive multiplayer digital lava lamp.
 ## Dependencies
 
 * Node.js v12
+* yarn
 * A computer with an operating system.
 
 ## Design
