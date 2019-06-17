@@ -106,24 +106,3 @@ export const setCell = (world: World, cell: Cell, alive: boolean) =>
     alive
         ? [...world, cell]
         : [...world].filter(({x, y}) => x !== cell.x || y !== cell.y);
-
-/**
- * Gets color ranking from a World
- * @param world The World
- */
-export const colorRanking = (world: World): ColorRanking => 
-    [...world
-        .map(({ color }) => ({ color, name: colorName(color) }))
-        .reduce((map, {color, name}) => {
-            let data = map.get(name);
-            if (data) {
-                data.count += 1;
-            } else {
-                data = {color, count: 1};
-            }
-            return map.set(name, data);
-        }, new Map<string, { color: string, count: number }>())
-    ].map(kvp => ({ name: kvp[0], ...kvp[1] }))
-    .sort((x, y) => y.count - x.count);
-
-export const colorName = (color: string) => colorNamer(color, { pick: ['basic'] }).basic[0].name;
