@@ -1,5 +1,6 @@
 import { Cell } from "./cell";
 import { World } from "./world";
+import { message } from "@giantmachines/redux-websocket/dist/actions";
 
 export interface Message {
     type: MessageType;
@@ -10,7 +11,8 @@ export enum MessageType {
     SetCell,
     Speed,
     Color,
-    NewColor
+    NewColor,
+    PlayerCount
 }
 
 export const isUpdate = (message: Message): message is Update => 
@@ -45,3 +47,10 @@ export interface NewColorMessage extends Message { }
 
 export const isNewColor = (message: Message): message is NewColorMessage =>
     message.type === MessageType.NewColor;
+
+export interface PlayerCountMessage extends Message {
+    count: number;
+}
+
+export const isPlayerCount = (message: Message): message is PlayerCountMessage => 
+    message.type === MessageType.PlayerCount;

@@ -1,8 +1,9 @@
 import { AnyAction, Reducer } from "redux";
-import { World, Message, Range, isUpdate, isSetCell, isSpeed, isColor, ColorRanking } from "../../models";
+import { World, Message, Range, isUpdate, isSetCell, isSpeed, isColor, ColorRanking, isPlayerCount } from "../../models";
 import { WEBSOCKET_MESSAGE, WEBSOCKET_SEND } from '@giantmachines/redux-websocket';
 import { WS_PREFIX } from "./socket";
-import { range, setCell, createLookup, colorRanking, colorName } from "../../common/world";
+import { range, setCell, createLookup } from "../../common/world";
+import { colorName, colorRanking } from "../../common/color";
 
 export interface GameState {
     speed?: number;
@@ -11,6 +12,7 @@ export interface GameState {
     colorRanking?: ColorRanking;
     world?: World;
     range?: Range;
+    playerCount?: number;
 }
 
 export const initialState: GameState = { 
@@ -47,6 +49,9 @@ const handleMessage = (state: GameState, message: Message) => {
     }
     if (isColor(message)) {
         return {...state, color: message.color, colorName: colorName(message.color) };
+    }
+    if (isPlayerCount(message)) {
+        return {...state, playerCount: message.count };
     }
 
     return {...state};

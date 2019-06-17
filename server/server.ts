@@ -1,7 +1,7 @@
 import * as http from 'http';
 import * as ws from 'ws';
 import { GameEvents } from './game-events';
-import { Update, MessageType, Message, SetCell, World, Speed, Cell, ColorMessage } from '../models';
+import { Update, MessageType, Message, SetCell, World, Speed, Cell, ColorMessage, PlayerCountMessage } from '../models';
 import {randomColor} from '../common/color';
 
 export class Server {
@@ -10,12 +10,16 @@ export class Server {
     private _httpServer: http.Server;
     private _wsServer: ws.Server;
 
+    get connectionCount() {
+        return [...this._wsServer.clients].length;
+    }
+
     constructor() {
         this._httpServer = http.createServer();
         this._wsServer = new ws.Server({ server: this._httpServer });
         this._wsServer.on('connection', connection => {
             console.debug('client connected');
-
+            this.broadcastPlayerCount();
             const sendColor = () => {
                 const color = randomColor();
                 const colorMessage: ColorMessage = {
@@ -59,9 +63,17 @@ export class Server {
             connection.on('close', () => { 
                 this._events.off('update', updateHandler);
                 this._events.off('setcell', setCellHandler);
+                this.broadcastPlayerCount();
             });
             this._events.emit('refresh');
         });
+    }
+
+    broadcastPlayerCount() {
+        const message: PlayerCountMessage = { type: MessageType.PlayerCount, count: this.connectionCount };
+        const data = JSON.stringify(message);
+        console.log('connections: ' + message.count );
+        this._wsServer.clients.forEach(client => client.send(data));
     }
 
     run() {
@@ -69,4 +81,5 @@ export class Server {
         this._httpServer.listen(5000, 'localhost', () => console.log('listening on localhost 5000'));
         return promise;
     }
+
 }
