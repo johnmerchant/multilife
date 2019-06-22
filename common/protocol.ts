@@ -70,8 +70,8 @@ const readColor = (data: Buffer, offset: number) => rgbToHex(
 const writeColor = (data: Buffer, offset: number, color: string) => {
     const [r,g,b] = hexToRgb(color);
     data.writeUInt32LE(r, offset);
-    data.writeUInt32LE(g, offset);
-    data.writeUInt32LE(b, offset);
+    data.writeUInt32LE(g, offset + 4);
+    data.writeUInt32LE(b, offset + 8);
 };
 
 const readCell = (data: Buffer, offset: number): Cell => ({
@@ -88,7 +88,8 @@ const writeCell = (data: Buffer, offset: number, cell: Cell) => {
 
 export const serializeMessage = (message: Message): Buffer => {
     // type guards lets us infer the type of the message
-    // unfortunately, cannot use switch statements with type guards
+    // unfortunately, cannot use switch statements with type guards, 
+    // so here's some else if's!
     if (isUpdateMessage(message)) {
         const data = Buffer.alloc(1 + (message.world.length * CELL_LENGTH));
         data.writeUInt8(MessageType.Update, 0);
