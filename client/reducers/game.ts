@@ -1,5 +1,5 @@
 import { AnyAction, Reducer } from "redux";
-import { World, Message, Range, isUpdate, isSetCell, isSpeed, isColorMessage, ColorRanking, isPlayerCount } from "../../models";
+import { World, Message, Range, isUpdateMessage, isSetCellMessage, isColorMessage, ColorRanking, isPlayerCount } from "../../models";
 import { WEBSOCKET_MESSAGE, WEBSOCKET_SEND } from '@giantmachines/redux-websocket';
 import { WS_PREFIX } from "./socket";
 import { range, setCell, createLookup } from "../../common/world";
@@ -32,20 +32,17 @@ export const game: Reducer<GameState> = (state = initialState, action: AnyAction
 }
 
 const handleMessage = (state: GameState, message: Message) => {
-    if (isUpdate(message)) {
+    if (isUpdateMessage(message)) {
         return { 
             ...state, 
             world: message.world,
             ...reduceWorld(message.world)
          };
     }
-    if (isSetCell(message)) {
+    if (isSetCellMessage(message)) {
         const {cell, alive} = message;
         const world = setCell(state.world || [], cell, alive);
         return { ...state, world, ...reduceWorld(world) };
-    }
-    if (isSpeed(message)) {
-        return {...state, speed: message.speed };
     }
     if (isColorMessage(message)) {
         return {...state, color: message.color, colorName: colorName(message.color) };

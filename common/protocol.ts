@@ -7,12 +7,14 @@ import {
     SetCellMessage,
     isColorMessage,
     isUpdateMessage,
+    isSetCellMessage,
+    isPlayerCount,
+    isNewColorMessage,
     UpdateMessage,
-    Cell
+    Cell,
 } from "../models";
 
 import { rgbToHex, hexToRgb } from "./color";
-
 
 const MAX_UPDATE_LENGTH = 255;
 const CELL_LENGTH = 15;
@@ -85,19 +87,33 @@ const writeCell = (data: Buffer, offset: number, cell: Cell) => {
 };
 
 export const serializeMessage = (message: Message): Buffer => {
-    if (isColorMessage(message)) {
+    // type guards lets us infer the type of the message
+    // unfortunately, cannot use switch statements with type guards
+    if (isUpdateMessage(message)) {
+        if (message.world.length > MAX_UPDATE_LENGTH) throw new RangeError('Max length of update message is ' + MAX_UPDATE_LENGTH);
+        const data = new Buffer(1 + (message.world.length * CELL_LENGTH));
+        data.writeUInt8(MessageType.Update, 0);
+        for (let i = 0; i < data.length; ++i) {
+            writeCell(data, i + 1, message.world[i]);
+        }
+        return data;
+    } else if (isSetCellMessage(message)) {
+        const data = new Buffer(1 + CELL_LENGTH + 1);
+        data.writeUInt8(message.alive ? 0 : 1, 1);
+        return data;
+    } else if (isColorMessage(message)) {
         const data = new Buffer(1 + COLOR_LENGTH);
         data.writeUInt8(MessageType.Color, 0);
         writeColor(data, 1, message.color);
         return data;
+    } else if (isPlayerCount(message)) {
+        const data = new Buffer(1 + 4);
+        data.writeUInt32LE(message.count, 1);
+        return data;
+    } else if (isNewColorMessage(message)) {
+        const data = new Buffer(1);
+        data.writeUInt8(message.type, 0);
+        return data;
     }
-    if (isUpdateMessage(message)) {
-        if (message.world.length > MAX_UPDATE_LENGTH) throw new RangeError('Max length of update message is ' + MAX_UPDATE_LENGTH);
-        const data = new Buffer(1 + (message.world.length * CELL_LENGTH));
-        for (let i = 0; i < data.length; ++i) {
-            writeCell(data, i + 1, message.world[i]);
-            
-        }
-    }
-    throw new Error('Unhandled message type ' + message.type);
+    throw new Error('Unhandled message type ' + message);
 };

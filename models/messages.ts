@@ -19,7 +19,7 @@ export interface UpdateMessage extends Message {
     world: World;
 }
 
-export const isSetCell = (message: Message): message is SetCellMessage =>
+export const isSetCellMessage = (message: Message): message is SetCellMessage =>
     message.type === MessageType.SetCell;
 
 export interface SetCellMessage extends Message {
@@ -34,9 +34,11 @@ export interface ColorMessage extends Message {
 export const isColorMessage = (message: Message): message is ColorMessage => 
     message.type === MessageType.Color;
 
-export interface NewColorMessage extends Message { }
+export interface NewColorMessage extends Message { 
 
-export const isNewColor = (message: Message): message is NewColorMessage =>
+}
+
+export const isNewColorMessage = (message: Message): message is NewColorMessage =>
     message.type === MessageType.NewColor;
 
 export interface PlayerCountMessage extends Message {

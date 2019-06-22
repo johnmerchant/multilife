@@ -2,7 +2,6 @@ import { WEBSOCKET_OPEN, WEBSOCKET_BROKEN, WEBSOCKET_CLOSED, DEFAULT_PREFIX } fr
 import { Reducer } from "redux";
 
 export const WS_PREFIX = DEFAULT_PREFIX + '::';
-
 export interface SocketState {
     isConnected: boolean;
 }
