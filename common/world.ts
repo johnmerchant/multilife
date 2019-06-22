@@ -1,4 +1,3 @@
-import colorNamer from 'color-namer';
 import { Cell, World, WorldLookup, Point, ColorRanking } from "../models";
 
 

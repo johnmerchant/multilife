@@ -20,7 +20,7 @@ export class Game {
     
     /**
      * Creates an instance of the Game of Life
-     * @param world A colleciton of living Cells
+     * @param world A collection of living Cells
      */
     constructor(world?: World) {
         this._world = world || [];
@@ -72,7 +72,7 @@ export class Game {
                     : cell.color
             }))
             // prevent gliders and other naughty creatures maxing out memory and CPU
-            .filter(({ x, y }) => x >= 0 && y >= 0 && x < 100 && y < 100));
+            .filter(({ x, y }) => x >= 0 && y >= 0 && x <= 24 && y <= 24));
     }
 
     toString() {

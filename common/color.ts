@@ -26,4 +26,10 @@ export const colorRanking = (world: World): ColorRanking =>
 
 export const colorName = (color: string) => colorNamer(color, { pick: ['basic'] }).basic[0].name;
 
+export const rgbToHex = (r: number, g: number, b: number) => color.rgb(r, g, b).hex();
+export const hexToRgb = (hex: string) => {
+    const c = color(hex);
+    return [c.red(), c.green(), c.blue()];
+};
+
 const rand = (min: number, max: number): number => Math.random() * (max - min) + min;

@@ -1,7 +1,7 @@
 import * as http from 'http';
 import * as ws from 'ws';
 import { GameEvents } from './game-events';
-import { Update, MessageType, Message, SetCell, World, Speed, Cell, ColorMessage, PlayerCountMessage } from '../models';
+import { UpdateMessage, MessageType, Message, SetCellMessage, World, Cell, ColorMessage, PlayerCountMessage } from '../models';
 import {randomColor} from '../common/color';
 
 export class Server {
@@ -17,6 +17,17 @@ export class Server {
     constructor() {
         this._httpServer = http.createServer();
         this._wsServer = new ws.Server({ server: this._httpServer });
+
+
+        const updateHandler = (world: World) => {
+            const update: UpdateMessage = {
+                type: MessageType.Update,
+                world
+            };
+            const data = JSON.stringify(update);
+            this._wsServer.clients.forEach(c => c.send(data));
+        };
+
         this._wsServer.on('connection', connection => {
             console.debug('client connected');
             this.broadcastPlayerCount();
@@ -36,7 +47,7 @@ export class Server {
                     const payload: Message = JSON.parse(String(data));
                     switch (payload.type) {
                         case MessageType.SetCell:
-                            const {cell, alive} = payload as SetCell;
+                            const {cell, alive} = payload as SetCellMessage;
                             console.debug({cell, alive});
                             this._events.emit('setcell', { ...cell, color: connectionColor }, alive);
                             break;
@@ -48,21 +59,12 @@ export class Server {
                     console.error(err);
                 }
             });
-            const updateHandler = (world: World) => {
-                const update: Update = {
-                    type: MessageType.Update,
-                    world
-                };
-                connection.send(JSON.stringify(update));
-            };
             const setCellHandler = (cell: Cell, alive: boolean) => {
-                const setCell: SetCell = { type: MessageType.SetCell, cell, alive };
+                const setCell: SetCellMessage = { type: MessageType.SetCell, cell, alive };
                 connection.send(JSON.stringify(setCell));
             };
             this._events.on('update', (world: World) => updateHandler(world));
             connection.on('close', () => { 
-                this._events.off('update', updateHandler);
-                this._events.off('setcell', setCellHandler);
                 this.broadcastPlayerCount();
             });
             this._events.emit('refresh');
