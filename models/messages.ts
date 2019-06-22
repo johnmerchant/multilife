@@ -12,7 +12,7 @@ export enum MessageType {
     PlayerCount
 }
 
-export const isUpdate = (message: Message): message is UpdateMessage => 
+export const isUpdateMessage = (message: Message): message is UpdateMessage => 
     message.type === MessageType.Update;
 
 export interface UpdateMessage extends Message {
