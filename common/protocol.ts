@@ -97,8 +97,10 @@ export const serializeMessage = (message: Message): Buffer => {
         }
         return data;
     } else if (isSetCellMessage(message)) {
-        const data = Buffer.alloc(1 + CELL_LENGTH + 1);
+        const data = Buffer.alloc(2 + CELL_LENGTH);
+        data.writeUInt8(MessageType.SetCell, 0);
         data.writeUInt8(message.alive ? 0 : 1, 1);
+        writeCell(data, 2, message.cell);
         return data;
     } else if (isColorMessage(message)) {
         const data = Buffer.alloc(1 + COLOR_LENGTH);
