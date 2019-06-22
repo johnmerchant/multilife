@@ -22,7 +22,7 @@
   "scripts": {
     "test": "tsc && jest",
     "clean": "rimraf dist/",
-    "build-client": "npm run prettier && parcel build client/index.html --out-dir dist/client",
+    "build-client": "parcel build client/index.html --out-dir dist/client",
     "dev-client": "parcel serve client/index.html --out-dir dist/client",
     "build-server": "tsc --outDir dist/server && cpx process.yml dist/server/",
     "build": "npm run clean && npm run build-server && npm run build-client",
@@ -40,7 +40,6 @@
     "cpx": "^1.5.0",
     "jest": "^24.8.0",
     "parcel": "^1.12.3",
-    "prettier": "^1.18.2",
     "rimraf": "^2.6.3",
     "ts-jest": "^24.0.2",
     "typescript": "^3.5.1"
