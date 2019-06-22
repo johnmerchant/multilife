@@ -5,11 +5,11 @@ export interface Message {
 }
 
 export enum MessageType {
-    Update,
-    SetCell,
-    Color,
-    NewColor,
-    PlayerCount
+    Update = 1,
+    SetCell = 2,
+    Color = 3,
+    NewColor = 4,
+    PlayerCount = 5
 }
 
 export const isUpdateMessage = (message: Message): message is UpdateMessage => 

@@ -16,12 +16,12 @@ import {
 
 import { rgbToHex, hexToRgb } from "./color";
 
-const MAX_UPDATE_LENGTH = 255;
 const CELL_LENGTH = 15;
 const COLOR_LENGTH = 12; // 3 * 4 bits
 
 export const deserializeMessage = (data: Buffer): Message => {
-    switch (data.readUInt8(0)) {
+    const messageType = data.readUInt8(0);
+    switch (messageType) {
         case MessageType.Color:
             const color: ColorMessage = {
                 type: MessageType.Color,
@@ -58,7 +58,7 @@ export const deserializeMessage = (data: Buffer): Message => {
             };
             return update;
         default:
-            throw new Error("Unknown MessageType " + data[0]);
+            throw new Error("Unknown MessageType " + messageType);
     }
 }
 
@@ -90,29 +90,29 @@ export const serializeMessage = (message: Message): Buffer => {
     // type guards lets us infer the type of the message
     // unfortunately, cannot use switch statements with type guards
     if (isUpdateMessage(message)) {
-        if (message.world.length > MAX_UPDATE_LENGTH) throw new RangeError('Max length of update message is ' + MAX_UPDATE_LENGTH);
-        const data = new Buffer(1 + (message.world.length * CELL_LENGTH));
+        const data = Buffer.alloc(1 + (message.world.length * CELL_LENGTH));
         data.writeUInt8(MessageType.Update, 0);
         for (let i = 0; i < data.length; ++i) {
             writeCell(data, i + 1, message.world[i]);
         }
         return data;
     } else if (isSetCellMessage(message)) {
-        const data = new Buffer(1 + CELL_LENGTH + 1);
+        const data = Buffer.alloc(1 + CELL_LENGTH + 1);
         data.writeUInt8(message.alive ? 0 : 1, 1);
         return data;
     } else if (isColorMessage(message)) {
-        const data = new Buffer(1 + COLOR_LENGTH);
+        const data = Buffer.alloc(1 + COLOR_LENGTH);
         data.writeUInt8(MessageType.Color, 0);
         writeColor(data, 1, message.color);
         return data;
     } else if (isPlayerCount(message)) {
-        const data = new Buffer(1 + 4);
+        const data = Buffer.alloc(1 + 4);
+        data.writeUInt8(MessageType.PlayerCount, 0);
         data.writeUInt32LE(message.count, 1);
         return data;
     } else if (isNewColorMessage(message)) {
-        const data = new Buffer(1);
-        data.writeUInt8(message.type, 0);
+        const data = Buffer.alloc(1);
+        data.writeUInt8(MessageType.NewColor, 0);
         return data;
     }
     throw new Error('Unhandled message type ' + message);
