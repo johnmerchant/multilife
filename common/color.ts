@@ -28,8 +28,8 @@ export const colorName = (color: string) => colorNamer(color, { pick: ['basic'] 
 
 export const rgbToHex = (r: number, g: number, b: number) => color.rgb(r, g, b).hex();
 export const hexToRgb = (hex: string) => {
-    const c = color(hex);
-    return [c.red(), c.green(), c.blue()];
+    const obj = color(hex);
+    return [obj.red(), obj.green(), obj.blue()];
 };
 
 const rand = (min: number, max: number): number => Math.random() * (max - min) + min;
