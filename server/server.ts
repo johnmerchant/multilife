@@ -1,8 +1,18 @@
 import * as http from 'http';
 import * as ws from 'ws';
 import { GameEvents } from './game-events';
-import { UpdateMessage, MessageType, Message, SetCellMessage, World, Cell, ColorMessage, PlayerCountMessage } from '../models';
 import {randomColor} from '../common/color';
+import { 
+    UpdateMessage,
+    MessageType,
+    Message,
+    SetCellMessage,
+    World,
+    Cell,
+    ColorMessage,
+    PlayerCountMessage
+} from '../models';
+import { deserializeMessage, serializeMessage } from '../common/protocol';
 
 export class Server {
 
@@ -18,15 +28,23 @@ export class Server {
         this._httpServer = http.createServer();
         this._wsServer = new ws.Server({ server: this._httpServer });
 
-
         const updateHandler = (world: World) => {
             const update: UpdateMessage = {
                 type: MessageType.Update,
                 world
             };
-            const data = JSON.stringify(update);
+            const data = serializeMessage(update);
             this._wsServer.clients.forEach(c => c.send(data));
         };
+
+        const setCellHandler = (cell: Cell, alive: boolean) => {
+            const setCell: SetCellMessage = { type: MessageType.SetCell, cell, alive };
+            const data = serializeMessage(setCell);
+            this._wsServer.clients.forEach(c => c.send(data));
+        };
+
+        this._events.on('setcell', (cell: Cell, alive: boolean) => setCellHandler(cell, alive));
+        this._events.on('update', (world: World) => updateHandler(world));
 
         this._wsServer.on('connection', connection => {
             console.debug('client connected');
@@ -37,14 +55,14 @@ export class Server {
                     type: MessageType.Color,
                     color
                 };
-                connection.send(JSON.stringify(colorMessage));
+                connection.send(serializeMessage(colorMessage));
                 return color;
             };
             let connectionColor = sendColor();
 
             connection.on('message', (data: ws.Data) => {
                 try {
-                    const payload: Message = JSON.parse(String(data));
+                    const payload: Message = deserializeMessage(data as Buffer);
                     switch (payload.type) {
                         case MessageType.SetCell:
                             const {cell, alive} = payload as SetCellMessage;
@@ -59,11 +77,6 @@ export class Server {
                     console.error(err);
                 }
             });
-            const setCellHandler = (cell: Cell, alive: boolean) => {
-                const setCell: SetCellMessage = { type: MessageType.SetCell, cell, alive };
-                connection.send(JSON.stringify(setCell));
-            };
-            this._events.on('update', (world: World) => updateHandler(world));
             connection.on('close', () => { 
                 this.broadcastPlayerCount();
             });
@@ -73,7 +86,7 @@ export class Server {
 
     broadcastPlayerCount() {
         const message: PlayerCountMessage = { type: MessageType.PlayerCount, count: this.connectionCount };
-        const data = JSON.stringify(message);
+        const data = serializeMessage(message);
         console.log('connections: ' + message.count );
         this._wsServer.clients.forEach(client => client.send(data));
     }

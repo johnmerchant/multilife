@@ -4,7 +4,7 @@ import {colorNameCss} from '../styles';
 import { connect } from "react-redux";
 import { State } from "../reducers";
 import { Dispatch } from 'redux';
-import { newColor } from '../actions';
+import { newColor } from '../actions/messages';
 
 interface StateProps {
     color?: string;

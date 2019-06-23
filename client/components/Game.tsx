@@ -1,12 +1,12 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 
-import React, {useRef, useEffect} from 'react';
+import {useRef, useEffect} from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import { World, Cell, Range, Point } from '../../models';
+import { World, Cell, Range } from '../../models';
 import { State } from '../reducers';
-import { setCell } from '../actions';
+import { setCell } from '../actions/messages';
 import {canvasContainerStyle} from '../styles';
 
 interface StateProps {
