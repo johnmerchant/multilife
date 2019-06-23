@@ -16,8 +16,8 @@ import {
 
 import { rgbToHex, hexToRgb } from "./color";
 
-const CELL_LENGTH = 15;
-const COLOR_LENGTH = 12; // 3 * 4 bits
+const COLOR_LENGTH = 12;
+const CELL_LENGTH = 3 + COLOR_LENGTH;
 
 export const deserializeMessage = (data: Buffer): Message => {
     const messageType = data.readUInt8(0);
@@ -83,13 +83,10 @@ const readCell = (data: Buffer, offset: number): Cell => ({
 const writeCell = (data: Buffer, offset: number, cell: Cell) => {
     data.writeUInt8(cell.x, offset);
     data.writeUInt8(cell.y, offset + 1);
-    writeColor(data, 2, cell.color);
+    writeColor(data, offset + 2, cell.color);
 };
 
 export const serializeMessage = (message: Message): Buffer => {
-    // type guards let us infer the type of the message
-    // unfortunately, cannot use switch statements with type guards, 
-    // so here's some else if's!
     if (isUpdateMessage(message)) {
         const data = Buffer.alloc(3 + (message.world.length * CELL_LENGTH));
         data.writeUInt8(MessageType.Update, 0);
