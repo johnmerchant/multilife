@@ -24,6 +24,32 @@ export const colorRanking = (world: World): ColorRanking =>
     ].map(kvp => ({ name: kvp[0], ...kvp[1] }))
     .sort((x, y) => y.count - x.count);
 
+/**
+ * Gives a HTML color a name
+ * @param color 
+ */
 export const colorName = (color: string) => colorNamer(color, { pick: ['basic'] }).basic[0].name;
 
+/**
+ * Converts RGB values to HTML color
+ * @param r Red
+ * @param g Green
+ * @param b Blue
+ */
+export const rgbToHex = (r: number, g: number, b: number) => color.rgb(r, g, b).hex();
+
+/**
+ * Converts HTML color string to RGB values
+ * @param hex 
+ */
+export const hexToRgb = (hex: string) => {
+    const obj = color(hex);
+    return [obj.red(), obj.green(), obj.blue()];
+};
+
+/**
+ * Generates a random value
+ * @param min 
+ * @param max 
+ */
 const rand = (min: number, max: number): number => Math.random() * (max - min) + min;

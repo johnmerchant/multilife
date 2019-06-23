@@ -1,4 +1,3 @@
-import colorNamer from 'color-namer';
 import { Cell, World, WorldLookup, Point, ColorRanking } from "../models";
 
 
@@ -84,20 +83,20 @@ export function toArray(world: World, lookup: WorldLookup = createLookup(world))
  */
 export function lookupNeighbors(cell: Point, lookup: WorldLookup): Cell[] {
     const neighbors: Point[] = [
-        { x: cell.x-1, y: cell.y-1 },
-        { x: cell.x, y: cell.y-1 },
-        { x: cell.x+1, y: cell.y-1 },
-        { x: cell.x-1, y: cell.y },
-        { x: cell.x+1, y: cell.y },
-        { x: cell.x-1, y: cell.y+1 },
-        { x: cell.x, y: cell.y+1 },
-        { x: cell.x+1, y: cell.y+1 }
+        { x: cell.x-1, y: cell.y-1 },   // top left
+        { x: cell.x, y: cell.y-1 },     // top center
+        { x: cell.x+1, y: cell.y-1 },   // top right
+        { x: cell.x-1, y: cell.y },     // left
+        { x: cell.x+1, y: cell.y },     // right
+        { x: cell.x-1, y: cell.y+1 },   // bottom left
+        { x: cell.x, y: cell.y+1 },     // bottom center
+        { x: cell.x+1, y: cell.y+1 }    // bottom right
     ];
     return neighbors.map(lookup).filter(c => typeof c !== 'undefined').map(c => c as Cell);
 }
 
 /**
- * Adds or removes a Cell from the World
+ * Adds or removes a Cell from the World 
  * @param world 
  * @param cell 
  * @param alive 
