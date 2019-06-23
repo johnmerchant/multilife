@@ -47,10 +47,10 @@ export const deserializeMessage = (data: Buffer): Message => {
             };
             return setCell;
         case MessageType.Update:
-            const length = data.readUInt8(1);
+            const length = data.readUInt16LE(1);
             const world: Cell[] = new Array(length);
             for (let i = 0; i < length; ++i) {
-                world[i] = readCell(data, (i * CELL_LENGTH) + 2);
+                world[i] = readCell(data, (i * CELL_LENGTH) + 3);
             }
             const update: UpdateMessage = {
                 type: MessageType.Update,
@@ -62,12 +62,12 @@ export const deserializeMessage = (data: Buffer): Message => {
     }
 }
 
-const readColor = (data: Buffer, offset: number) => rgbToHex(
+export const readColor = (data: Buffer, offset: number) => rgbToHex(
     data.readUInt32LE(offset),
     data.readUInt32LE(offset + 4), 
     data.readUInt32LE(offset + 8));
 
-const writeColor = (data: Buffer, offset: number, color: string) => {
+export const writeColor = (data: Buffer, offset: number, color: string) => {
     const [r,g,b] = hexToRgb(color);
     data.writeUInt32LE(r, offset);
     data.writeUInt32LE(g, offset + 4);
@@ -87,14 +87,15 @@ const writeCell = (data: Buffer, offset: number, cell: Cell) => {
 };
 
 export const serializeMessage = (message: Message): Buffer => {
-    // type guards lets us infer the type of the message
+    // type guards let us infer the type of the message
     // unfortunately, cannot use switch statements with type guards, 
     // so here's some else if's!
     if (isUpdateMessage(message)) {
-        const data = Buffer.alloc(1 + (message.world.length * CELL_LENGTH));
+        const data = Buffer.alloc(3 + (message.world.length * CELL_LENGTH));
         data.writeUInt8(MessageType.Update, 0);
-        for (let i = 0; i < data.length; ++i) {
-            writeCell(data, i + 1, message.world[i]);
+        data.writeUInt16LE(message.world.length, 1);
+        for (let i = 0; i < message.world.length; ++i) {
+            writeCell(data, (i * CELL_LENGTH) + 3, message.world[i]);
         }
         return data;
     } else if (isSetCellMessage(message)) {

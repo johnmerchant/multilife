@@ -1,4 +1,4 @@
-import { serializeMessage, deserializeMessage } from "../common/protocol";
+import { serializeMessage, deserializeMessage, readColor, writeColor } from "../common/protocol";
 import { UpdateMessage, MessageType, World, SetCellMessage, Message, ColorMessage, NewColorMessage, PlayerCountMessage } from "../models";
 
 const color = '#FFEEDD';
@@ -40,4 +40,10 @@ describe('protocol', () => {
         type: MessageType.PlayerCount,
         count: 5
     }));
+    test('writeReadColor', () => {
+        const buffer = Buffer.alloc(12);
+        writeColor(buffer, 0, color);
+        const result = readColor(buffer, 0);
+        expect(result).toEqual(color);
+    });
 });
