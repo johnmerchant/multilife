@@ -22,7 +22,7 @@ const serializeDeserialize = <T extends Message>(message: T) => {
 describe('protocol', () => {
     test('Update', () => serializeDeserialize<UpdateMessage>({
         type: MessageType.Update,
-        world: world
+        world
     }));
     test('SetCell', () => serializeDeserialize<SetCellMessage>({
         type: MessageType.SetCell,
@@ -34,7 +34,7 @@ describe('protocol', () => {
         color
     }));
     test('NewColor', () => serializeDeserialize<NewColorMessage>({
-        type: MessageType.Color
+        type: MessageType.NewColor
     }));
     test('PlayerCount', () => serializeDeserialize<PlayerCountMessage>({
         type: MessageType.PlayerCount,

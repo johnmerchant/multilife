@@ -52,11 +52,11 @@ describe('glider', () => {
      ⬜  ⬜  ⬜  ⬜  ⬜
      */
     const game = new Game([
-        {x: 1, y: 0, color},
-        {x: 2, y: 1, color},
-        {x: 0, y: 2, color}, 
-        {x: 1, y: 2, color},
-        {x: 2, y: 2, color}
+        { x: 1, y: 0, color },
+        { x: 2, y: 1, color },
+        { x: 0, y: 2, color }, 
+        { x: 1, y: 2, color },
+        { x: 2, y: 2, color }
     ]);
 
     test('tick', () => {
