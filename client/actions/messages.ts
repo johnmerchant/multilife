@@ -1,5 +1,4 @@
 import { Cell, MessageType, SetCellMessage, Message, NewColorMessage } from "../../models";
-import { serializeMessage } from "../../common/protocol";
 import { send } from "./socket";
 
 export const setCell = (cell: Cell, alive: boolean) => sendMessage<SetCellMessage>({

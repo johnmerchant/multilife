@@ -46,8 +46,8 @@ export class Server {
         this._events.on('setcell', (cell: Cell, alive: boolean) => setCellHandler(cell, alive));
         this._events.on('update', (world: World) => updateHandler(world));
 
-        this._wsServer.on('connection', connection => {
-            console.debug('client connected');
+        this._wsServer.on('connection', (connection, req) => {
+            console.debug('client connected: ' + req.connection.remoteAddress);
             this.broadcastPlayerCount();
             const sendColor = () => {
                 const color = randomColor();
