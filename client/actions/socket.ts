@@ -43,6 +43,17 @@ let socket: WebSocket | null = null;
 
 export const init = (store: Store) => {
     socket = new WebSocket(url);
+    window.addEventListener("focus", () => {
+        if (!socket) {
+            socket = new WebSocket(url);
+            attachEvents(store);
+        }
+    });
+    attachEvents(store);
+};
+
+const attachEvents = (store: Store) => {
+    if (!socket) return;
     socket.onopen = () => store.dispatch(wsOpen());
     socket.onclose = () => store.dispatch(wsClose());
     socket.onmessage = (event) => { 
