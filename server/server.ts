@@ -10,7 +10,12 @@ import {
     World,
     Cell,
     ColorMessage,
-    PlayerCountMessage
+    PlayerCountMessage,
+    Point,
+    DrawCellsMessage,
+    isSetCellMessage,
+    isDrawCellsMessage,
+    isNewColorMessage
 } from '../models';
 import { deserializeMessage, serializeMessage } from '../common/protocol';
 
@@ -43,7 +48,14 @@ export class Server {
             this._wsServer.clients.forEach(c => c.send(data));
         };
 
+        const drawCellsHandler = (color: string, cells: Point[]) => {
+            const message: DrawCellsMessage = { type: MessageType.DrawCells, color, cells };
+            const data = serializeMessage(message);
+            this._wsServer.clients.forEach(c => c.send(data));
+        };
+
         this._events.on('setcell', (cell: Cell, alive: boolean) => setCellHandler(cell, alive));
+        this._events.on('drawcells', (color: string, cells: Point[]) => drawCellsHandler(color ,cells));
         this._events.on('update', (world: World) => updateHandler(world));
 
         this._wsServer.on('connection', connection => {
@@ -58,20 +70,19 @@ export class Server {
                 connection.send(serializeMessage(colorMessage));
                 return color;
             };
+
             let connectionColor = sendColor();
 
             connection.on('message', (data: ws.Data) => {
                 try {
-                    const payload: Message = deserializeMessage(data as Buffer);
-                    switch (payload.type) {
-                        case MessageType.SetCell:
-                            const {cell, alive} = payload as SetCellMessage;
-                            console.debug({cell, alive});
-                            this._events.emit('setcell', { ...cell, color: connectionColor }, alive);
-                            break;
-                        case MessageType.NewColor:
-                            connectionColor = sendColor();
-                            break;
+                    const message: Message = deserializeMessage(data as Buffer);
+                    if (isSetCellMessage(message)) {
+                        const {x, y} = message.cell;
+                        this._events.emit('setcell', { x, y, color: connectionColor }, message.alive);
+                    } else if (isDrawCellsMessage(message)) {
+                        this._events.emit('drawcells', connectionColor, message.cells);
+                    } else if (isNewColorMessage(message)) {
+                        connectionColor = sendColor();
                     }
                 } catch (err) {
                     console.error(err);

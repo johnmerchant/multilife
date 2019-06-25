@@ -1,4 +1,4 @@
-import { Cell } from "./cell";
+import { Cell, Point } from "./cell";
 import { World } from "./world";
 export interface Message {
     type: MessageType;
@@ -9,7 +9,8 @@ export enum MessageType {
     SetCell = 2,
     Color = 3,
     NewColor = 4,
-    PlayerCount = 5
+    PlayerCount = 5,
+    DrawCells = 6
 }
 
 export const isUpdateMessage = (message: Message): message is UpdateMessage => 
@@ -45,5 +46,13 @@ export interface PlayerCountMessage extends Message {
     count: number;
 }
 
-export const isPlayerCount = (message: Message): message is PlayerCountMessage => 
+export const isPlayerCountMessage = (message: Message): message is PlayerCountMessage => 
     message.type === MessageType.PlayerCount;
+
+export interface DrawCellsMessage extends Message {
+    color: string;
+    cells: ReadonlyArray<Point>;
+}
+
+export const isDrawCellsMessage = (message: Message): message is DrawCellsMessage =>
+    message.type === MessageType.DrawCells;

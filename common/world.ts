@@ -1,4 +1,5 @@
 import { Cell, World, WorldLookup, Point, ColorRanking } from "../models";
+import { string } from "prop-types";
 
 
 /**
@@ -105,3 +106,13 @@ export const setCell = (world: World, cell: Cell, alive: boolean) =>
     alive
         ? [...world, cell]
         : [...world].filter(({x, y}) => x !== cell.x || y !== cell.y);
+
+/**
+ * Adds Cells to the World
+ * @param world 
+ * @param cells 
+ */
+export const setCells = (world: World, cells: ReadonlyArray<Cell>): World => {
+    const cellsLookup = createLookup(cells);
+    return [...world.filter(cell => typeof cellsLookup(cell) === 'undefined'), ...cells];
+};

@@ -1,5 +1,5 @@
 import { World, WorldLookup, Cell, Point } from "../models";
-import { cells, stringify, createLookup, range, lookupNeighbors, setCell } from "../common/world";
+import { cells, stringify, createLookup, range, lookupNeighbors, setCell, setCells } from "../common/world";
 import color from 'color';
 
 /**
@@ -34,6 +34,11 @@ export class Game {
         }
         
         return new Game(setCell(this._world, cell, isAlive));
+    }
+
+    drawCells(color: string, cells: Point[]): Game { 
+        if (cells.length === 0) return this;
+        return new Game(setCells(this._world, cells.map(({x, y}) => ({ x, y, color }))));
     }
 
     range() {
