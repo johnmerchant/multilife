@@ -1,6 +1,7 @@
 import { Cell, World, WorldLookup, Point, ColorRanking } from "../models";
-import { string } from "prop-types";
 
+export const MAX_X = 24;
+export const MAX_Y = 24;
 
 /**
  * Creates a lookup of living Cells by location

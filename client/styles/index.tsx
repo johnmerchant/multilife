@@ -28,8 +28,8 @@ export const containerStyle = css`
 `;
 
 export const canvasContainerStyle = css`
-    flex-grow: 2;
-    border: 1px #000 solid;
+    flex-grow: 0;
+    border: 1px white solid;
 `;
 
 export const sidebarStyle = css`

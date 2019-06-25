@@ -8,12 +8,13 @@ import { World, Cell, Range, Point } from '../../models';
 import { State } from '../reducers';
 import { setCell, drawCells } from '../actions/messages';
 import {canvasContainerStyle} from '../styles';
-import { setCells } from '../../common/world';
+import { setCells, MAX_Y, MAX_X } from '../../common/world';
 
 interface StateProps {
     world?: World;
     range?: Range;
     color?: string;
+    playerCount?: number;
 }
 
 interface DispatchProps {
@@ -28,15 +29,27 @@ type Props = StateProps & DispatchProps & OwnProps;
 
 const CELL_HEIGHT = 14;
 const CELL_WIDTH = 14;
+const CANVAS_WIDTH = CELL_WIDTH * MAX_X;
+const CANVAS_HEIGHT = CELL_HEIGHT * MAX_Y;
 
-const GameComponent = ({ world, range, sendDrawCells, color }: Props) => {
+const GameComponent = ({ world, range, sendDrawCells, color, playerCount }: Props) => {
 
     if (!color || typeof world === 'undefined' || typeof range === 'undefined') {
      return <span>Awaiting the World state...</span>;
     }
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
+
+    const [drawingState, setDrawingState] = useState({
+        isDrawing: false,
+        points: new Array<Point>()
+    });
+
+    const drawingStateRef = useRef(drawingState);
+    
     useEffect(() => {
+        document.title = typeof playerCount !== 'undefined' && playerCount > 1 ? `MultiLife! (${playerCount - 1})` : 'MultiLife!';
+
         const canvas = canvasRef.current;
         if (canvas) {
             const parent = canvas.parentNode as HTMLElement;
@@ -55,22 +68,19 @@ const GameComponent = ({ world, range, sendDrawCells, color }: Props) => {
                 for (const cell of currentWorld) {
                     drawCell(ctx, cell);
                 }
+
+                const favicon: HTMLLinkElement | null = document.getElementById('favicon') as HTMLLinkElement;
+                if (favicon) favicon.href = canvas.toDataURL();
             }
         }
-    }, [canvasRef, range, world]);
+    }, [canvasRef, range, world, playerCount, drawingStateRef]);
 
-    const [drawingState, setDrawingState] = useState({
-        isDrawing: false,
-        points: new Array<Point>()
-    });
 
-    const drawingStateRef = useRef(drawingState);
-
-    return <div css={canvasContainerStyle}> 
+    return <div css={[{maxHeight: CANVAS_HEIGHT}, canvasContainerStyle]}> 
         <canvas 
             ref={canvasRef} 
-            width="100%"
-            height="100%"
+            width={CANVAS_WIDTH}
+            height={CANVAS_HEIGHT}
             onClick={(event) => {
                 if (!color) return; // we don't have a color from the server yet...
                 if (drawingStateRef.current.isDrawing) return;
@@ -169,7 +179,7 @@ const translatePosition = (canvas: HTMLCanvasElement, clientX: number, clientY: 
 };
 
 export const Game = connect(
-    ({ game }: State) => ({ world: game.world, range: game.range, color: game.color }),
+    ({ game }: State) => ({ world: game.world, range: game.range, color: game.color, playerCount: game.playerCount }),
     (dispatch: Dispatch) => ({ 
         sendSetCell: (cell: Cell, alive: boolean) => dispatch(setCell(cell, alive)),
         sendDrawCells: (color: string, cells: Point[]) => dispatch(drawCells(color, cells))
