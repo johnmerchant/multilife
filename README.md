@@ -21,7 +21,7 @@ The game itself is rendered using a `<canvas>`.
 
 Game state is managed server side, and events are pushed live between clients and the server using a websocket
 
-The protocol, models and utility functions are all *isomorphic*. That is to say, it is code able to be executed on both the server and client side.
+The protocol, models and utility functions are all [isomorphic](https://en.wikipedia.org/wiki/Isomorphic_JavaScript). That is to say, it is code able to be executed on both the server and client side.
 
 ## Running
 
