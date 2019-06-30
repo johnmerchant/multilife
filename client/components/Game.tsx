@@ -7,8 +7,10 @@ import { connect } from 'react-redux';
 import { World, Cell, Range, Point } from '../../models';
 import { State } from '../reducers';
 import { setCell, drawCells } from '../actions/messages';
-import {canvasContainerStyle} from '../styles';
+import {canvasContainerStyle, canvasStyle} from '../styles';
 import { setCells, MAX_Y, MAX_X } from '../../common/world';
+import { touches } from '../util/touch';
+import { translatePosition, drawCell } from '../util/canvas';
 
 interface StateProps {
     world?: World;
@@ -27,15 +29,10 @@ interface OwnProps {
 
 type Props = StateProps & DispatchProps & OwnProps;
 
-const CELL_HEIGHT = 14;
-const CELL_WIDTH = 14;
-const CANVAS_WIDTH = CELL_WIDTH * MAX_X;
-const CANVAS_HEIGHT = CELL_HEIGHT * MAX_Y;
-
 const GameComponent = ({ world, range, sendDrawCells, color, playerCount }: Props) => {
 
     if (!color || typeof world === 'undefined' || typeof range === 'undefined') {
-     return <span>Awaiting the World state...</span>;
+        return <span>Awaiting the World state...</span>;
     }
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -44,9 +41,14 @@ const GameComponent = ({ world, range, sendDrawCells, color, playerCount }: Prop
         isDrawing: false,
         points: new Array<Point>()
     });
-
     const drawingStateRef = useRef(drawingState);
-    
+
+    const [dimensions, setDimensions] = useState({
+        cellWidth: 14,
+        cellHeight: 14
+    });
+    const dimensionsRef = useRef(dimensions);
+
     useEffect(() => {
         document.title = typeof playerCount !== 'undefined' && playerCount > 1 ? `MultiLife! (${playerCount - 1})` : 'MultiLife!';
 
@@ -55,18 +57,26 @@ const GameComponent = ({ world, range, sendDrawCells, color, playerCount }: Prop
             const parent = canvas.parentNode as HTMLElement;
             if (parent) {
                 const styles = getComputedStyle(parent);
-                canvas.width = parseInt(styles.getPropertyValue('width'), 10);
-                canvas.height = parseInt(styles.getPropertyValue('height'), 10);
+                let width = Math.floor(parseFloat(styles.getPropertyValue('width')));
+                let height = Math.floor(parseFloat(styles.getPropertyValue('height')));
+                const size = Math.min(width, height);
+                canvas.width = size;
+                canvas.height = size;
             }
+
+            dimensionsRef.current = {
+                cellWidth: canvas.width / MAX_X,
+                cellHeight: canvas.height / MAX_Y
+            };
 
             const ctx = canvas.getContext('2d');
             if (ctx) {
-                ctx.fillStyle = '#000'; // black out
-                ctx.fillRect(0, 0, canvas.width * CELL_WIDTH, canvas.height * CELL_WIDTH);
+                ctx.fillStyle = '#000';
+                ctx.fillRect(0, 0, dimensionsRef.current.cellWidth, canvas.height * dimensionsRef.current.cellHeight);
 
                 const currentWorld = setCells(world, drawingStateRef.current.points.map(({x ,y}) => ({ x, y, color })));
                 for (const cell of currentWorld) {
-                    drawCell(ctx, cell);
+                    drawCell(ctx, cell, dimensionsRef.current.cellWidth, dimensionsRef.current.cellHeight);
                 }
 
                 const favicon: HTMLLinkElement | null = document.getElementById('favicon') as HTMLLinkElement;
@@ -76,107 +86,87 @@ const GameComponent = ({ world, range, sendDrawCells, color, playerCount }: Prop
     }, [canvasRef, range, world, playerCount, drawingStateRef]);
 
 
-    return <div css={[{maxHeight: CANVAS_HEIGHT}, canvasContainerStyle]}> 
-        <canvas 
-            ref={canvasRef} 
-            width={CANVAS_WIDTH}
-            height={CANVAS_HEIGHT}
-            onClick={(event) => {
-                if (!color) return; // we don't have a color from the server yet...
-                if (drawingStateRef.current.isDrawing) return;
+    const onBeginDrawing = (canvas: HTMLCanvasElement, points: Point[]) => {
+        if (!color) return;
 
-                const canvas = event.target as HTMLCanvasElement;
-                const cell: Cell = { 
-                    ...translatePosition(event.target as HTMLCanvasElement, event.clientX, event.clientY),
-                    color
-                };
-                setCell(cell, true);
+        const ctx = canvas.getContext('2d');
+
+        for (const point of points) {
+
+            const cell: Cell = {
+                ...translatePosition(canvas, point.x, point.y, dimensionsRef.current.cellWidth, dimensionsRef.current.cellHeight),
+                color
+            };
+    
+            if (ctx) drawCell(ctx, cell,  dimensionsRef.current.cellWidth, dimensionsRef.current.cellHeight);
+    
+            const nextState = { 
+                isDrawing: true,
+                points: [cell]
+            };
+    
+            drawingStateRef.current = nextState;
+        }
+
+        setDrawingState(drawingStateRef.current);
+    };
+
+    const onDrawing = (canvas: HTMLCanvasElement, points: Point[]) => {
+        if (!color) return;
+        if (!drawingStateRef.current.isDrawing) return;
+        
+        for (const point of points) {
+            const {x, y} = translatePosition(canvas, point.x, point.y, dimensionsRef.current.cellWidth, dimensionsRef.current.cellHeight);
+            const exists = drawingStateRef.current.points.some((p) => x === p.x && y === p.y);
+            
+            if (!exists) {
+                const cell = {x, y, color};
                 const ctx = canvas.getContext('2d');
                 if (ctx) {
-                    ctx.fillStyle = color;
-                    drawCell(ctx, cell);
-                }
-            }}
-            onMouseDown={(event) => {
-                if (!color) return;
-
-                const canvas = event.target as HTMLCanvasElement;
-
-                const cell: Cell = {
-                    ...translatePosition(canvas, event.clientX, event.clientY),
-                    color
-                };
-
-                const ctx = canvas.getContext('2d');
-                if (ctx) drawCell(ctx, cell);
-
-                const nextState = { 
-                    isDrawing: true,
-                    points: [cell]
-                };
-
-                drawingStateRef.current = nextState;
-                setDrawingState(nextState);
-            }}
-            onMouseMove={(event) => {
-                if (!color) return;
-                const currentDrawingState = drawingStateRef.current;
-                if (!currentDrawingState.isDrawing) return;
-                
-                const canvas = event.target as HTMLCanvasElement;
-                const {x, y} = translatePosition(canvas, event.clientX, event.clientY);
-                const exists = currentDrawingState.points.some((p) => x === p.x && y === p.y);
-                
-                if (!exists) {
-                    const cell = {x, y, color};
-                    const ctx = canvas.getContext('2d');
-                    if (ctx) {
-                        drawCell(ctx, cell);
-                    }
-                    const nextState = {
-                        isDrawing: true,
-                        points: [...currentDrawingState.points, {x, y}],
-                    };
-                    drawingStateRef.current = nextState;
-                    setDrawingState(nextState);
-                }
-            }}
-            onMouseUp={() => {
-                if (!color) return;
-
-                const currentDrawingState = drawingStateRef.current;
-
-                if (currentDrawingState.points.length > 0) {
-                    drawCells(color, currentDrawingState.points);
-                    sendDrawCells(color, currentDrawingState.points);
+                    drawCell(ctx, cell, dimensionsRef.current.cellWidth, dimensionsRef.current.cellHeight);
                 }
                 const nextState = {
-                    isDrawing: false,
-                    points: []
+                    isDrawing: true,
+                    points: [...drawingStateRef.current.points, {x, y}],
                 };
                 drawingStateRef.current = nextState;
-                setDrawingState(nextState);
-            }}
+            }
+        }
+
+        setDrawingState(drawingStateRef.current);
+    };
+
+    const onEndDrawing = () => {
+        if (!color) return;
+
+        const currentDrawingState = drawingStateRef.current;
+
+        if (currentDrawingState.points.length > 0) {
+            drawCells(color, currentDrawingState.points);
+            sendDrawCells(color, currentDrawingState.points);
+        }
+        const nextState = {
+            isDrawing: false,
+            points: []
+        };
+        drawingStateRef.current = nextState;
+        setDrawingState(nextState);
+    };
+
+    return <div css={canvasContainerStyle}> 
+        <canvas 
+            css={canvasStyle}
+            ref={canvasRef} 
+            onMouseDown={(event) => onBeginDrawing(event.target as HTMLCanvasElement, [{ x: event.clientX, y: event.clientY }])}
+            onTouchStart={(event) => onBeginDrawing(event.target as HTMLCanvasElement, [...touches(event.changedTouches)])}
+            onMouseMove={(event) => onDrawing(event.target as HTMLCanvasElement, [{ x: event.clientX, y: event.clientY }])}
+            onTouchMove={(event) => onDrawing(event.target as HTMLCanvasElement,  [...touches(event.changedTouches)])}
+            onMouseUp={() => onEndDrawing()}
+            onTouchEnd={() => onEndDrawing()}
         />
     </div>;
 };
 
-const drawCell = (ctx: CanvasRenderingContext2D, cell: Cell) => {
-    ctx.fillStyle = cell.color;
-    ctx.shadowBlur = 2;
-    ctx.shadowColor = cell.color;
-    ctx.fillRect(cell.x * CELL_WIDTH, cell.y * CELL_HEIGHT, CELL_WIDTH, CELL_HEIGHT);
-};
-
-const translatePosition = (canvas: HTMLCanvasElement, clientX: number, clientY: number): Point => {
-    const rect = canvas.getBoundingClientRect();
-    const x = clientX - rect.left;
-    const y = clientY - rect.top; 
-    return { 
-        x: Math.floor(x / CELL_WIDTH),
-        y: Math.floor(y / CELL_HEIGHT)
-    };
-};
 
 export const Game = connect(
     ({ game }: State) => ({ world: game.world, range: game.range, color: game.color, playerCount: game.playerCount }),

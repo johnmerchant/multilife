@@ -1,5 +1,5 @@
 import { World, WorldLookup, Cell, Point } from "../models";
-import { cells, stringify, createLookup, range, lookupNeighbors, setCell, setCells } from "../common/world";
+import { cells, stringify, createLookup, range, lookupNeighbors, setCell, setCells, MAX_X, MAX_Y } from "../common/world";
 import color from 'color';
 
 /**
@@ -76,8 +76,8 @@ export class Game {
                     ? neighbors.map(z => color(z.color)).reduce((x, y) => x.mix(y)).hex()
                     : cell.color
             }))
-            // prevent gliders and other naughty creatures maxing out memory and CPU
-            .filter(({ x, y }) => x >= 0 && y >= 0 && x <= 24 && y <= 24));
+            // world bounds
+            .filter(({ x, y }) => x >= 0 && y >= 0 && x <= MAX_X && y <= MAX_Y));
     }
 
     toString() {

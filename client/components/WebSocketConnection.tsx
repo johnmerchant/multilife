@@ -13,7 +13,7 @@ const WebSocketConnectionComponent: FunctionComponent<Props> = ({ isConnected, c
 };
 
 /**
- * Connects the App to the WebSocket endpoint.
+ * Renders child elements when the App is connected to the WebSocket.
  */
 export const WebSocketConnection = connect(
     (state: State) => ({ isConnected: state.socket.isConnected })

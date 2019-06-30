@@ -28,8 +28,15 @@ export const containerStyle = css`
 `;
 
 export const canvasContainerStyle = css`
-    flex-grow: 0;
-    border: 1px white solid;
+    flex-grow: 1;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`;
+
+export const canvasStyle = css`
+    border: 2px white solid;
 `;
 
 export const sidebarStyle = css`
