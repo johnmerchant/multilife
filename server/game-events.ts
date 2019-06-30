@@ -10,13 +10,15 @@ declare interface IGameEvents {
     on(event: 'drawcells', listener: (color: string, cells: Point[]) => void): this;
 }
 
+const INTERVAL = 250;
+
 /**
  * Handles changes in Game State 
  */
 export class GameEvents extends EventEmitter implements IGameEvents {
     
     private _game = new Game(); // current state
-    private _interval = setInterval(() => this.tick(), 1000);
+    private _interval?: NodeJS.Timeout = setInterval(() => this.tick(), INTERVAL);
 
     constructor() {
         super();
@@ -34,9 +36,20 @@ export class GameEvents extends EventEmitter implements IGameEvents {
         this._game = this._game.drawCells(color, cells);
     }
 
+    get isPaused() {
+        return typeof this._interval === 'undefined';
+    }
+
     stop() {
-        clearInterval(this._interval);
-        this.emit('stop');
+        if (this._interval) {
+            clearInterval(this._interval);
+            delete this._interval;
+            this.emit('stop');
+        }
+    }
+
+    start() {
+        this._interval = setInterval(() => this.tick(), INTERVAL);
     }
 
     private refresh() {

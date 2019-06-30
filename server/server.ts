@@ -34,6 +34,7 @@ export class Server {
         this._wsServer = new ws.Server({ server: this._httpServer });
 
         const updateHandler = (world: World) => {
+            if (this._wsServer.clients.size === 0) return;
             const update: UpdateMessage = {
                 type: MessageType.Update,
                 world
@@ -43,12 +44,14 @@ export class Server {
         };
 
         const setCellHandler = (cell: Cell, alive: boolean) => {
+            if (this._wsServer.clients.size === 0) return;
             const setCell: SetCellMessage = { type: MessageType.SetCell, cell, alive };
             const data = serializeMessage(setCell);
             this._wsServer.clients.forEach(c => c.send(data));
         };
 
         const drawCellsHandler = (color: string, cells: Point[]) => {
+            if (this._wsServer.clients.size === 0) return;
             const message: DrawCellsMessage = { type: MessageType.DrawCells, color, cells };
             const data = serializeMessage(message);
             this._wsServer.clients.forEach(c => c.send(data));
@@ -60,6 +63,7 @@ export class Server {
 
         this._wsServer.on('connection', connection => {
             console.debug('client connected');
+            if (this._events.isPaused) this._events.start();
             this.broadcastPlayerCount();
             const sendColor = () => {
                 const color = randomColor();
@@ -89,6 +93,9 @@ export class Server {
                 }
             });
             connection.on('close', () => { 
+                if (this._wsServer.clients.size === 0) {
+                    this._events.stop();
+                }
                 this.broadcastPlayerCount();
             });
             this._events.emit('refresh');
@@ -96,6 +103,7 @@ export class Server {
     }
 
     broadcastPlayerCount() {
+        if (this._wsServer.clients.size === 0) return;
         const message: PlayerCountMessage = { type: MessageType.PlayerCount, count: this.connectionCount };
         const data = serializeMessage(message);
         console.log('connections: ' + message.count );
