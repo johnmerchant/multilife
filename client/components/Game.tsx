@@ -57,8 +57,8 @@ const GameComponent = ({ world, range, sendDrawCells, color, playerCount }: Prop
             const parent = canvas.parentNode as HTMLElement;
             if (parent) {
                 const styles = getComputedStyle(parent);
-                let width = Math.floor(parseFloat(styles.getPropertyValue('width')));
-                let height = Math.floor(parseFloat(styles.getPropertyValue('height')));
+                let width = parseFloat(styles.getPropertyValue('width'));
+                let height = parseFloat(styles.getPropertyValue('height'));
                 const size = Math.min(width, height);
                 canvas.width = size;
                 canvas.height = size;
