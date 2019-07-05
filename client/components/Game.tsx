@@ -42,12 +42,7 @@ const GameComponent = ({ world, range, sendDrawCells, color, playerCount }: Prop
         points: new Array<Point>()
     });
     const drawingStateRef = useRef(drawingState);
-
-    const [dimensions, setDimensions] = useState({
-        cellWidth: 14,
-        cellHeight: 14
-    });
-    const dimensionsRef = useRef(dimensions);
+    const dimensionsRef = useRef({ cellWidth: 14, cellHeight: 14 });
 
     useEffect(() => {
         document.title = typeof playerCount !== 'undefined' && playerCount > 1 ? `MultiLife! (${playerCount - 1})` : 'MultiLife!';
@@ -159,7 +154,10 @@ const GameComponent = ({ world, range, sendDrawCells, color, playerCount }: Prop
             ref={canvasRef} 
             onMouseDown={(event) => onBeginDrawing(event.target as HTMLCanvasElement, [{ x: event.clientX, y: event.clientY }])}
             onTouchStart={(event) => onBeginDrawing(event.target as HTMLCanvasElement, [...touches(event.changedTouches)])}
-            onMouseMove={(event) => onDrawing(event.target as HTMLCanvasElement, [{ x: event.clientX, y: event.clientY }])}
+            onMouseMove={(event) => { 
+                if (event.buttons !== 1) return onEndDrawing();
+                onDrawing(event.target as HTMLCanvasElement, [{ x: event.clientX, y: event.clientY }]);
+            }}
             onTouchMove={(event) => onDrawing(event.target as HTMLCanvasElement,  [...touches(event.changedTouches)])}
             onMouseUp={() => onEndDrawing()}
             onTouchEnd={() => onEndDrawing()}
