@@ -6,3 +6,6 @@ export function *touches(list: React.TouchList): IterableIterator<Point> {
         if (touch) yield { x: touch.clientX, y: touch.clientY };
     }
 }
+
+
+export const isTouchDevice = 'ontouchstart' in document.documentElement;
