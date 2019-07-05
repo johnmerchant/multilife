@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, Global } from '@emotion/core';
-import {createStore, applyMiddleware} from 'redux';
+import {createStore} from 'redux';
 import {reducer} from '../reducers';
 import {Provider} from 'react-redux';
 import {WebSocketConnection} from './WebSocketConnection';
@@ -9,11 +9,12 @@ import { Colors } from './Colors';
 import { globalStyle, appStyle, containerStyle, sidebarStyle } from '../styles';
 import GithubCorner from 'react-github-corner';
 import { Welcome } from './Welcome';
-import { init } from '../actions/socket';
-import { Title } from './Title';
+import { init as initSocket } from '../actions/socket';
+import { Header } from './Header';
+import { Footer } from './Footer';
 
 const store = createStore(reducer);
-init(store);
+initSocket(store);
 
 export const App = () => <div css={appStyle}>
     <Global styles={globalStyle} />
@@ -25,9 +26,7 @@ export const App = () => <div css={appStyle}>
         direction="right" 
     />
     <Provider store={store}>
-        <Title text="MultiLife!"/>
-        <p>Welcome, this is a peculiar experiment in <a target="_blank" href="https://en.wikipedia.org/wiki/Cellular_automaton">cellular automata</a>, constructed with curiosity by <a href="https://jmercha.github.io/">jmercha</a>. 🤓</p>
-        <p>Everyone who visits multilife.live sees the same grid.</p>
+        <Header />
         <WebSocketConnection>
             <Welcome />
             <main css={containerStyle}>
@@ -36,6 +35,7 @@ export const App = () => <div css={appStyle}>
                 </aside>
                 <Game />
             </main>
+            <Footer />
         </WebSocketConnection>
     </Provider>
 </div>;

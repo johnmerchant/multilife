@@ -127,3 +127,19 @@ export const colorNameCss = css`
         text-decoration: underline;
     }
 `;
+
+export const footerCss = css`
+    margin-top: 2rem;
+    padding-bottom: 2rem;
+`;
+
+export const shareButtonsCss = css`
+    display: flex;
+    justify-content: center;
+`;
+
+export const shareButtonCss = css`
+    :hover {
+        cursor: pointer;
+    }
+`;
