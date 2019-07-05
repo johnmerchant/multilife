@@ -25,7 +25,8 @@ const TitleComponent = ({text, colors}: Props) => {
         })), 
         [text, colors]);
     return <h1 css={titleStyle}>
-        {charColors.map(({ char, color }, i) => <span key={'c'+i} css={[{ color, textShadow: `0 0 4px ${color}` }, titleCharStyle]}>{char}</span>)}
+        {charColors.map(({ char, color }, i) => 
+            <span key={'c'+i} css={[{ color, textShadow: `0 0 4px ${color}` }, titleCharStyle]}>{char}</span>)}
     </h1>;
 }
 
