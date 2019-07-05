@@ -79,6 +79,7 @@ export const welcomeStyle = css`
 
 export const canvasStyle = css`
     border: 2px white solid;
+    touch-action: none;
     width: 900px;
     height: 900px;
     @media (max-width: 1025px) {
