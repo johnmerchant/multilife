@@ -102,6 +102,7 @@ export const sidebarStyle = css`
     margin-left: 2rem;
     margin-right: 2rem;
     text-align: left;
+    width: 14rem;
 
     @media (max-width: 769px) {
         display: flex;
