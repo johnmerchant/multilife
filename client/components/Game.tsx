@@ -153,7 +153,10 @@ const GameComponent = ({ world, range, sendDrawCells, color, playerCount }: Prop
             css={canvasStyle}
             ref={canvasRef} 
             onMouseDown={(event) => onBeginDrawing(event.target as HTMLCanvasElement, [{ x: event.clientX, y: event.clientY }])}
-            onTouchStart={(event) => onBeginDrawing(event.target as HTMLCanvasElement, [...touches(event.changedTouches)])}
+            onTouchStart={(event) => {
+                event.preventDefault();
+                onBeginDrawing(event.target as HTMLCanvasElement, [...touches(event.changedTouches)])
+            }}
             onMouseMove={(event) => { 
                 if (event.buttons !== 1) return onEndDrawing();
                 onDrawing(event.target as HTMLCanvasElement, [{ x: event.clientX, y: event.clientY }]);
