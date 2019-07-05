@@ -5,7 +5,7 @@ An experiment in realtime cellular automata.
 
 Basically, an interactive multiplayer digital lava lamp.
 
-![](https://media.giphy.com/media/VEVoTlZHQlqKVHWgsu/source.gif)
+![](https://media.giphy.com/media/RJtJARbIYPjuoBrX22/giphy.gif)
 
 ## Dependencies
 
