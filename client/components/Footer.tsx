@@ -20,7 +20,7 @@ export const Footer = () => <footer css={footerCss}>
         <RedditShareButton css={shareButtonCss} title="MutliLife" url="https://multilife.live/">
             <RedditIcon size={32} />
         </RedditShareButton>
-        <FacebookShareButton css={shareButtonCss} url="https://multilife.live/" hashtag="cellularautomata">
+        <FacebookShareButton css={shareButtonCss} url="https://multilife.live">
             <FacebookIcon size={32} />
         </FacebookShareButton>
     </div>
