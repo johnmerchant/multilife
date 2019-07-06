@@ -10,6 +10,7 @@ export interface GameState {
     colorName?: string;
     colorRanking?: ColorRanking;
     world?: World;
+    drawnCells?: World;
     range?: Range;
     playerCount?: number;
 }
@@ -29,11 +30,11 @@ export const game: Reducer<GameState> = (state = initialState, action: AnyAction
 
 const handleMessage = (state: GameState, message: Message) => {
     if (isUpdateMessage(message)) {
-        return { 
-            ...state, 
-            world: message.world,
-            ...reduceWorld(message.world)
-         };
+        let world = message.world;
+        if (state.drawnCells) {
+            world = setCells(world || [], state.drawnCells);
+        }
+        return { ...state, drawnCells: undefined, world, ...reduceWorld(world) };
     } else if (isSetCellMessage(message)) {
         const {cell, alive} = message;
         const world = setCell(state.world || [], cell, alive);
@@ -45,8 +46,9 @@ const handleMessage = (state: GameState, message: Message) => {
     else if (isPlayerCountMessage(message)) {
         return {...state, playerCount: message.count };
     } else if (isDrawCellsMessage(message)) {
-        const world = setCells(state.world || [], message.cells.map(({x, y}) => ({ x, y, color: message.color })));
-        return {...state, world, ...reduceWorld(world) };
+        const drawnCells = message.cells.map(({x, y}) => ({ x, y, color: message.color }));
+        const world = setCells(state.world || [], drawnCells);
+        return {...state, drawnCells, world, ...reduceWorld(world) };
     }
     return {...state};
 }

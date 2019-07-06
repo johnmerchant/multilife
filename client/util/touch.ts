@@ -7,5 +7,4 @@ export function *touches(list: React.TouchList): IterableIterator<Point> {
     }
 }
 
-
 export const isTouchDevice = 'ontouchstart' in document.documentElement;
