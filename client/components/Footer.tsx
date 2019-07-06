@@ -24,4 +24,4 @@ export const Footer = () => <footer css={footerCss}>
             <FacebookIcon size={32} />
         </FacebookShareButton>
     </div>
-</footer>;
+</footer>

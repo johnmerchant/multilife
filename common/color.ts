@@ -28,7 +28,7 @@ export const colorRanking = (world: World): ColorRanking =>
  * Gives a HTML color a name
  * @param color 
  */
-export const colorName = (color: string) => colorNamer(color, { pick: ['basic'] }).basic[0].name;
+export const colorName = (color: string) => colorNamer(color, { pick: ['html'] }).html[0].name;
 
 /**
  * Converts RGB values to HTML color
