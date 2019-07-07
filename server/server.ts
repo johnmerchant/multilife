@@ -1,5 +1,6 @@
 import * as http from 'http';
 import * as ws from 'ws';
+import {createServer, Socket} from 'net';
 import { GameEvents } from './game-events';
 import {randomColor} from '../common/color';
 import { 
@@ -19,20 +20,23 @@ import {
 } from '../models';
 import { deserializeMessage, serializeMessage } from '../common/protocol';
 
+
 export class Server {
 
     private _events = new GameEvents();
-    private _httpServer: http.Server;
-    private _wsServer: ws.Server;
+    private _httpServer = http.createServer();
+    private _wsServer = new ws.Server({ server: this._httpServer });
+    private _tcpSockets = new Set<Socket>();
+    private _tcpServer = createServer(socket => {
+        socket.on('close', () => this._tcpSockets.delete(socket));
+        this._tcpSockets.add(socket);
+    });
 
     get connectionCount() {
         return [...this._wsServer.clients].length;
     }
 
     constructor() {
-        this._httpServer = http.createServer();
-        this._wsServer = new ws.Server({ server: this._httpServer });
-
         const updateHandler = (world: World) => {
             if (this._wsServer.clients.size === 0) return;
             const update: UpdateMessage = {
@@ -41,6 +45,7 @@ export class Server {
             };
             const data = serializeMessage(update);
             this._wsServer.clients.forEach(c => c.send(data));
+            this._tcpSockets.forEach(s => s.write(data));
         };
 
         const setCellHandler = (cell: Cell, alive: boolean) => {
@@ -48,6 +53,7 @@ export class Server {
             const setCell: SetCellMessage = { type: MessageType.SetCell, cell, alive };
             const data = serializeMessage(setCell);
             this._wsServer.clients.forEach(c => c.send(data));
+            this._tcpSockets.forEach(s => s.write(data));
         };
 
         const drawCellsHandler = (color: string, cells: Point[]) => {
@@ -55,6 +61,7 @@ export class Server {
             const message: DrawCellsMessage = { type: MessageType.DrawCells, color, cells };
             const data = serializeMessage(message);
             this._wsServer.clients.forEach(c => c.send(data));
+            this._tcpSockets.forEach(s => s.write(data));
         };
 
         this._events.on('setcell', (cell: Cell, alive: boolean) => setCellHandler(cell, alive));
@@ -110,10 +117,14 @@ export class Server {
         this._wsServer.clients.forEach(client => client.send(data));
     }
 
-    run() {
-        const promise = new Promise((resolve) => this._httpServer.on('close', () => resolve()));
-        this._httpServer.listen(5000, 'localhost', () => console.log('listening on localhost 5000'));
-        return promise;
+    async run() {
+        const http = new Promise((resolve) => this._httpServer.on('close', () => resolve()));
+        this._httpServer.listen(5000, 'localhost', () => console.log('HTTP listening on localhost 5000'));
+        
+        const tcp = new Promise((resolve) => this._tcpServer.on('close', () => resolve()));
+        this._tcpServer.listen(31337, () => console.log('TCP listening on 31337'));
+
+        await Promise.all([http, tcp]);
     }
 
 }
