@@ -112,6 +112,7 @@ export class Server {
         const data = serializeMessage(message);
         console.log('connections: ' + message.count );
         this._wsServer.clients.forEach(client => client.send(data));
+        this._udpServer.send(data, 31337);
     }
 
     async run() {

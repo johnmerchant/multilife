@@ -35,6 +35,7 @@ RGBmatrixPanel matrix(A, B, C, D, CLK, LAT, OE, false);
 
 #define UPDATE 1
 #define SET_CELL 2
+#define PLAYER_COUNT 5
 #define DRAW_CELLS 6
 
 typedef struct {
@@ -92,6 +93,11 @@ void loop() {
           matrix.drawPixel(cell.point.x, cell.point.y, 0);
         }
         break;
+      case PLAYER_COUNT:
+        if (readInt() == 0) {
+          matrix.fillScreen(0);
+        }
+        break;
       case DRAW_CELLS:
         uint8_t len8 = client.read();
         Color color = readColor();
@@ -102,6 +108,7 @@ void loop() {
           renderCell(cell);
         }
         break;
+      
     }
   }
   if (!client.connected()) {
