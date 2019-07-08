@@ -18,7 +18,7 @@
     "react-share": "^3.0.0",
     "redux": "^4.0.1",
     "use-debounce": "^2.1.0",
-    "ws": "^7.0.1"
+    "ws": "^7.1.0"
   },
   "scripts": {
     "test": "tsc && jest",
