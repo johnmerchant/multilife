@@ -2017,7 +2017,8 @@ color-name@^1.0.0:
 
 "color-namer@https://github.com/jmercha/color-namer.git":
   version "1.3.0"
-  resolved "https://github.com/jmercha/color-namer.git#1fd76ce98c9b13c5464a32bc8e61de3ab55f534e"
+  uid "5f91f52fe762eddb54ab01807ddc525f330414ad"
+  resolved "https://github.com/jmercha/color-namer.git#5f91f52fe762eddb54ab01807ddc525f330414ad"
   dependencies:
     chroma-js "^1.3.4"
 
