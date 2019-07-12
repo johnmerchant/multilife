@@ -33,10 +33,7 @@ export interface WsSendAction {
     message: Message;
 }
 export const send: ActionCreator<WsSendAction> = (message: Message) => {
-    if (socket) {
-        socket.send(serializeMessage(message));
-        console.log(message);
-    }
+    if (socket) socket.send(serializeMessage(message));
     return { type: WS_SEND, message };
 };
 
