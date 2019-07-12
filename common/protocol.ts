@@ -25,6 +25,9 @@ const CELL_HEADER_LENGTH = 1 + POINT_LENGTH;
 const CELL_LENGTH = CELL_HEADER_LENGTH + COLOR_LENGTH;
 const DRAW_CELLS_HEADER_LENGTH = 2 + COLOR_LENGTH;
 
+export const MAX_DRAW_CELLS_LENGTH = 255;
+export const MAX_UPDATE_LENGTH = 65535;
+
 export const deserializeMessage = (data: Buffer): Message => {
     const messageType = data.readUInt8(0);
     switch (messageType) {
@@ -116,6 +119,11 @@ const writePoint = (data: Buffer, offset: number, point: Point) => {
 };
 
 const writeUpdate = (message: UpdateMessage): Buffer => {
+
+    if (message.world.length > MAX_UPDATE_LENGTH) {
+        throw new RangeError(`Max length of update is ${MAX_UPDATE_LENGTH}, received ${message.world.length}`);
+    }
+
     const data = Buffer.alloc(3 + (message.world.length * CELL_LENGTH));
     data.writeUInt8(MessageType.Update, 0);
     data.writeUInt16LE(message.world.length, 1);
@@ -148,6 +156,11 @@ const writePlayerCount = (message: PlayerCountMessage): Buffer => {
 };
 
 const writeDrawCells = (message: DrawCellsMessage): Buffer => {
+
+    if (message.cells.length > MAX_DRAW_CELLS_LENGTH) {
+        throw new RangeError(`Max length of DRAW_CELLS is ${MAX_DRAW_CELLS_LENGTH}, received ${message.cells.length}`);
+    }
+
     const data = Buffer.alloc(DRAW_CELLS_HEADER_LENGTH + (message.cells.length * POINT_LENGTH));
     data.writeUInt8(MessageType.DrawCells, 0);
     data.writeUInt8(message.cells.length, 1);

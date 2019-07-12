@@ -7,10 +7,11 @@ import { connect } from 'react-redux';
 import { World, Cell, Range, Point } from '../../models';
 import { State } from '../reducers';
 import { setCell, drawCells } from '../actions/messages';
-import {canvasContainerStyle, canvasStyle} from '../styles';
+import { canvasContainerStyle, canvasStyle } from '../styles';
 import { setCells, MAX_Y, MAX_X } from '../../common/world';
 import { touches } from '../util/touch';
 import { translatePosition, drawCell } from '../util/canvas';
+import { MAX_DRAW_CELLS_LENGTH } from '../../common/protocol';
 
 interface StateProps {
     world?: World;
@@ -109,6 +110,7 @@ const GameComponent = ({ world, range, sendDrawCells, color, playerCount }: Prop
     const onDrawing = (canvas: HTMLCanvasElement, points: Point[]) => {
         if (!color) return;
         if (!drawingStateRef.current.isDrawing) return;
+        if (drawingStateRef.current.points.length >= MAX_DRAW_CELLS_LENGTH) return;
         
         for (const point of points) {
             const {x, y} = translatePosition(canvas, point.x, point.y, dimensionsRef.current.cellWidth, dimensionsRef.current.cellHeight);
