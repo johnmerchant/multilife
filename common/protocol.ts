@@ -32,7 +32,7 @@ export const deserializeMessage = (data: Buffer): Message => {
     const messageType = data.readUInt8(0);
     switch (messageType) {
         case MessageType.Color: return readColorMessage(data);
-        case MessageType.NewColor: return readNewColor();
+        case MessageType.NewColor: return newColorMessage();
         case MessageType.PlayerCount: return readPlayerCount(data);
         case MessageType.SetCell: return readSetCell(data);
         case MessageType.Update: return readUpdate(data)
@@ -47,9 +47,7 @@ const readColorMessage = (data: Buffer): ColorMessage => ({
     color: readColor(data, 1)
 });
 
-const readNewColor = (): NewColorMessage => ({
-    type: MessageType.NewColor
-});
+const newColorMessage = (): NewColorMessage => ({ type: MessageType.NewColor });
 
 const readPlayerCount = (data: Buffer): PlayerCountMessage => ({
     type: MessageType.PlayerCount,
