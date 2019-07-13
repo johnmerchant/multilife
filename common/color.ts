@@ -1,6 +1,7 @@
 import color from 'color';
 import { World, ColorRanking } from '../models';
 import colorNamer from 'color-namer';
+import { string } from 'prop-types';
 
 /** Generates a random color */
 export const randomColor = () => color.hsl(rand(0, 360), 100, rand(40, 65)).hex();
@@ -53,3 +54,11 @@ export const hexToRgb = (hex: string) => {
  * @param max 
  */
 const rand = (min: number, max: number): number => Math.random() * (max - min) + min;
+
+const mixCache = new WeakMap<string[], string>();
+export const mix = (colors: string[]) => {
+    if (mixCache.has(colors)) return <string>mixCache.get(colors);
+    const result = colors.map(c => color(c)).reduce((x, y) => x.mix(y)).hex();
+    mixCache.set(colors, result);
+    return result;
+};

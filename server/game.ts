@@ -1,7 +1,6 @@
 import { World, WorldLookup, Cell, Point } from "../models";
 import { cells, stringify, createLookup, range, lookupNeighbors, setCell, setCells, MAX_X, MAX_Y } from "../common/world";
-import color from 'color';
-
+import { mix } from '../common/color';
 /**
  * Represents an instance of Conway's Game of Life game state.
  */
@@ -73,7 +72,7 @@ export class Game {
                 x: point.x,
                 y: point.y,
                 color: reproduce(neighbors.length) || typeof cell === 'undefined'
-                    ? neighbors.map(z => color(z.color)).reduce((x, y) => x.mix(y)).hex()
+                    ? mix(neighbors.map(z => z.color))
                     : cell.color
             }))
             // world bounds
