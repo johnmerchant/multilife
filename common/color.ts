@@ -56,6 +56,11 @@ export const hexToRgb = (hex: string) => {
 const rand = (min: number, max: number): number => Math.random() * (max - min) + min;
 
 const mixCache = new WeakMap<string[], string>();
+
+/**
+ * Combines colors
+ * @param colors colors to mix
+ */
 export const mix = (colors: string[]) => {
     if (mixCache.has(colors)) return <string>mixCache.get(colors);
     const result = colors.map(c => color(c)).reduce((x, y) => x.mix(y)).hex();
