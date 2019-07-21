@@ -1,6 +1,6 @@
 import * as http from 'http';
 import * as ws from 'ws';
-import * as dgram from 'dgram';
+import * as net from 'net';
 import { GameEvents } from './game-events';
 import {randomColor} from '../common/color';
 import { 
@@ -20,14 +20,15 @@ import {
 } from '../models';
 import { deserializeMessage, serializeMessage } from '../common/protocol';
 
-const UDP_PORT = 31337;
+const TCP_PORT = 31337;
 
 export class Server {
 
     private _events = new GameEvents();
     private _httpServer = http.createServer();
     private _wsServer = new ws.Server({ server: this._httpServer });
-    private _udpServer = dgram.createSocket('udp4');
+    private _tcpServer: net.Server;
+    private _tcpClients = new Set<net.Socket>();
 
     get connectionCount() {
         return [...this._wsServer.clients].length;
@@ -42,7 +43,7 @@ export class Server {
             };
             const data = serializeMessage(update);
             this._wsServer.clients.forEach(c => c.send(data));
-            this._udpServer.send(data, 31337);
+            this._tcpClients.forEach(c => c.write(data));
         };
 
         const setCellHandler = (cell: Cell, alive: boolean) => {
@@ -50,7 +51,7 @@ export class Server {
             const setCell: SetCellMessage = { type: MessageType.SetCell, cell, alive };
             const data = serializeMessage(setCell);
             this._wsServer.clients.forEach(c => c.send(data));
-            this._udpServer.send(data, 31337);
+            this._tcpClients.forEach(c => c.write(data));
         };
 
         const drawCellsHandler = (color: string, cells: Point[]) => {
@@ -58,11 +59,16 @@ export class Server {
             const message: DrawCellsMessage = { type: MessageType.DrawCells, color, cells };
             const data = serializeMessage(message);
             this._wsServer.clients.forEach(c => c.send(data));
-            this._udpServer.send(data, 31337);
+            this._tcpClients.forEach(c => c.write(data));
         };
 
+        this._tcpServer = net.createServer(socket => {
+            this._tcpClients.add(socket);
+            socket.on('close', () => this._tcpClients.delete(socket));
+        });
+
         this._events.on('setcell', (cell: Cell, alive: boolean) => setCellHandler(cell, alive));
-        this._events.on('drawcells', (color: string, cells: Point[]) => drawCellsHandler(color ,cells));
+        this._events.on('drawcells', (color: string, cells: Point[]) => drawCellsHandler(color, cells));
         this._events.on('update', (world: World) => updateHandler(world));
 
         this._wsServer.on('connection', connection => {
@@ -112,17 +118,17 @@ export class Server {
         const data = serializeMessage(message);
         console.log('connections: ' + message.count );
         this._wsServer.clients.forEach(client => client.send(data));
-        this._udpServer.send(data, 31337);
+        this._tcpClients.forEach(c => c.write(data));
     }
 
     async run() {
         const http = new Promise((resolve) => this._httpServer.on('close', () => resolve()));
         this._httpServer.listen(5000, 'localhost', () => console.log('HTTP listening on localhost 5000'));
         
-        const udp = new Promise((resolve) => this._udpServer.on('close', () => resolve()));
-        this._udpServer.bind(UDP_PORT, () => console.log('UDP listening on 31337'));
+        const tcp = new Promise((resolve) => this._tcpServer.on('close', () => resolve()));
+        this._tcpServer.listen(TCP_PORT, () => console.log('TCP server listening on 31337'));
 
-        await Promise.all([http, udp]);
+        await Promise.all([http, tcp]);
     }
 
 }
