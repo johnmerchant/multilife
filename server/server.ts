@@ -34,7 +34,7 @@ export class Server {
             console.info('dgram status 1', rinfo);
             this._udpClients.add(rinfo);
         } else {
-            console.info('dgram status 1', rinfo);
+            console.info('dgram status 0', rinfo);
             this._udpClients.delete(rinfo);
         }
     });
@@ -131,8 +131,10 @@ export class Server {
 
     private udpBroadcast(data: Buffer) {
         this._udpClients.forEach(c => this._udpServer.send(data, c.port, c.address, err => {
-            this._udpClients.delete(c);
-            console.error(err);
+            if (err) {
+                this._udpClients.delete(c);
+                console.error(err);
+            }
         }));
     }
 
