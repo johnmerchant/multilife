@@ -65,6 +65,10 @@ export class Server {
         this._tcpServer = net.createServer(socket => {
             this._tcpClients.add(socket);
             socket.on('close', () => this._tcpClients.delete(socket));
+            socket.on('error', (err) => {
+                this._tcpClients.delete(socket);
+                console.error(err);
+            });
         });
 
         this._tcpServer.on('error', err => console.error(err));
