@@ -67,6 +67,8 @@ export class Server {
             socket.on('close', () => this._tcpClients.delete(socket));
         });
 
+        this._tcpServer.on('error', err => console.error(err));
+
         this._events.on('setcell', (cell: Cell, alive: boolean) => setCellHandler(cell, alive));
         this._events.on('drawcells', (color: string, cells: Point[]) => drawCellsHandler(color, cells));
         this._events.on('update', (world: World) => updateHandler(world));
