@@ -27,8 +27,18 @@ export class Server {
     private _events = new GameEvents();
     private _httpServer = http.createServer();
     private _wsServer = new ws.Server({ server: this._httpServer });
-    private _udpServer = dgram.createSocket('udp4', (msg, rinfo) => (msg.length > 0 && msg.readUInt8(0)) ? this._udpClients.add(rinfo) : this._udpClients.delete(rinfo));
     private _udpClients = new Set<dgram.RemoteInfo>();
+    private _udpServer = dgram.createSocket('udp4', (msg, rinfo) => {
+        const status = msg.readUInt8(0);
+        if (status) {
+            console.info('dgram status 1', rinfo);
+            this._udpClients.add(rinfo);
+        } else {
+            console.info('dgram status 1', rinfo);
+            this._udpClients.delete(rinfo);
+        }
+    });
+    
 
     get connectionCount() {
         return [...this._wsServer.clients].length;

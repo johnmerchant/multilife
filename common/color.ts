@@ -1,7 +1,6 @@
 import color from 'color';
 import { World, ColorRanking } from '../models';
 import colorNamer from 'color-namer';
-import { string } from 'prop-types';
 
 /** Generates a random color */
 export const randomColor = () => color.hsl(rand(0, 360), 100, rand(40, 65)).hex();
