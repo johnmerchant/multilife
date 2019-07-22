@@ -1,8 +1,8 @@
 import * as http from 'http';
 import * as ws from 'ws';
-import * as net from 'net';
+import * as dgram from 'dgram';
 import { GameEvents } from './game-events';
-import {randomColor} from '../common/color';
+import { randomColor } from '../common/color';
 import { 
     UpdateMessage,
     MessageType,
@@ -20,21 +20,22 @@ import {
 } from '../models';
 import { deserializeMessage, serializeMessage } from '../common/protocol';
 
-const TCP_PORT = 31337;
+const UDP_PORT = 31337;
 
 export class Server {
 
     private _events = new GameEvents();
     private _httpServer = http.createServer();
     private _wsServer = new ws.Server({ server: this._httpServer });
-    private _tcpServer: net.Server;
-    private _tcpClients = new Set<net.Socket>();
+    private _udpServer = dgram.createSocket('udp4', (msg, rinfo) => (msg.length > 0 && msg.readUInt8(0)) ? this._udpClients.add(rinfo) : this._udpClients.delete(rinfo));
+    private _udpClients = new Set<dgram.RemoteInfo>();
 
     get connectionCount() {
         return [...this._wsServer.clients].length;
     }
 
     constructor() {
+
         const updateHandler = (world: World) => {
             if (this._wsServer.clients.size === 0) return;
             const update: UpdateMessage = {
@@ -43,7 +44,7 @@ export class Server {
             };
             const data = serializeMessage(update);
             this._wsServer.clients.forEach(c => c.send(data));
-            this._tcpClients.forEach(c => c.write(data));
+            this.udpBroadcast(data);
         };
 
         const setCellHandler = (cell: Cell, alive: boolean) => {
@@ -51,7 +52,7 @@ export class Server {
             const setCell: SetCellMessage = { type: MessageType.SetCell, cell, alive };
             const data = serializeMessage(setCell);
             this._wsServer.clients.forEach(c => c.send(data));
-            this._tcpClients.forEach(c => c.write(data));
+            this.udpBroadcast(data);
         };
 
         const drawCellsHandler = (color: string, cells: Point[]) => {
@@ -59,19 +60,10 @@ export class Server {
             const message: DrawCellsMessage = { type: MessageType.DrawCells, color, cells };
             const data = serializeMessage(message);
             this._wsServer.clients.forEach(c => c.send(data));
-            this._tcpClients.forEach(c => c.write(data));
+            this.udpBroadcast(data);
         };
 
-        this._tcpServer = net.createServer(socket => {
-            this._tcpClients.add(socket);
-            socket.on('close', () => this._tcpClients.delete(socket));
-            socket.on('error', (err) => {
-                this._tcpClients.delete(socket);
-                console.error(err);
-            });
-        });
-
-        this._tcpServer.on('error', err => console.error(err));
+        this._udpServer.on('error', err => console.error(err));
 
         this._events.on('setcell', (cell: Cell, alive: boolean) => setCellHandler(cell, alive));
         this._events.on('drawcells', (color: string, cells: Point[]) => drawCellsHandler(color, cells));
@@ -124,17 +116,24 @@ export class Server {
         const data = serializeMessage(message);
         console.log('connections: ' + message.count );
         this._wsServer.clients.forEach(client => client.send(data));
-        this._tcpClients.forEach(c => c.write(data));
+        this.udpBroadcast(data);
+    }
+
+    private udpBroadcast(data: Buffer) {
+        this._udpClients.forEach(c => this._udpServer.send(data, c.port, c.address, err => {
+            this._udpClients.delete(c);
+            console.error(err);
+        }));
     }
 
     async run() {
         const http = new Promise((resolve) => this._httpServer.on('close', () => resolve()));
         this._httpServer.listen(5000, 'localhost', () => console.log('HTTP listening on localhost 5000'));
         
-        const tcp = new Promise((resolve) => this._tcpServer.on('close', () => resolve()));
-        this._tcpServer.listen(TCP_PORT, () => console.log('TCP server listening on 31337'));
+        const udp = new Promise((resolve) => this._udpServer.on('close', () => resolve()));
+        this._udpServer.bind(UDP_PORT, () => console.log('UDP socket bound on 31337'));
 
-        await Promise.all([http, tcp]);
+        await Promise.all([http, udp]);
     }
 
 }
