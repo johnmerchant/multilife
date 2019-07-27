@@ -28,14 +28,24 @@ export class Server {
     private _httpServer = http.createServer();
     private _wsServer = new ws.Server({ server: this._httpServer });
     private _udpClients = new Set<dgram.RemoteInfo>();
+    private _udpTimeout = new Map<dgram.RemoteInfo, number>();
     private _udpServer = dgram.createSocket('udp4', (msg, rinfo) => {
         const status = msg.readUInt8(0);
-        if (status) {
-            console.info('dgram status 1', rinfo);
+        if (status) { // available
             this._udpClients.add(rinfo);
-        } else {
-            console.info('dgram status 0', rinfo);
+            if (this._udpTimeout.has(rinfo)) {
+                clearTimeout(this._udpTimeout.get(rinfo));
+            }
+            setTimeout(() => {
+                this._udpClients.delete(rinfo);
+                this._udpTimeout.delete(rinfo);
+            }, 1000 * 60);
+        } else { // unavailable
             this._udpClients.delete(rinfo);
+            if (this._udpTimeout.has(rinfo)) {
+                clearTimeout(this._udpTimeout.get(rinfo));
+                this._udpTimeout.delete(rinfo);
+            }
         }
     });
     
