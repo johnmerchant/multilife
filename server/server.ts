@@ -19,6 +19,7 @@ import {
     isNewColorMessage
 } from '../models';
 import { deserializeMessage, serializeMessage } from '../common/protocol';
+import { UdpServer } from './udp';
 
 const UDP_PORT = 31337;
 
@@ -27,28 +28,7 @@ export class Server {
     private _events = new GameEvents();
     private _httpServer = http.createServer();
     private _wsServer = new ws.Server({ server: this._httpServer });
-    private _udpClients = new Set<dgram.RemoteInfo>();
-    private _udpTimeout = new Map<dgram.RemoteInfo, number>();
-    private _udpServer = dgram.createSocket('udp4', (msg, rinfo) => {
-        const status = msg.readUInt8(0);
-        if (status) { // available
-            this._udpClients.add(rinfo);
-            if (this._udpTimeout.has(rinfo)) {
-                clearTimeout(this._udpTimeout.get(rinfo));
-            }
-            setTimeout(() => {
-                this._udpClients.delete(rinfo);
-                this._udpTimeout.delete(rinfo);
-            }, 1000 * 60);
-        } else { // unavailable
-            this._udpClients.delete(rinfo);
-            if (this._udpTimeout.has(rinfo)) {
-                clearTimeout(this._udpTimeout.get(rinfo));
-                this._udpTimeout.delete(rinfo);
-            }
-        }
-    });
-    
+    private _udpServer = new UdpServer();
 
     get connectionCount() {
         return [...this._wsServer.clients].length;
@@ -64,7 +44,7 @@ export class Server {
             };
             const data = serializeMessage(update);
             this._wsServer.clients.forEach(c => c.send(data));
-            this.udpBroadcast(data);
+            this._udpServer.broadcast(data);
         };
 
         const setCellHandler = (cell: Cell, alive: boolean) => {
@@ -72,7 +52,7 @@ export class Server {
             const setCell: SetCellMessage = { type: MessageType.SetCell, cell, alive };
             const data = serializeMessage(setCell);
             this._wsServer.clients.forEach(c => c.send(data));
-            this.udpBroadcast(data);
+            this._udpServer.broadcast(data);
         };
 
         const drawCellsHandler = (color: string, cells: Point[]) => {
@@ -80,10 +60,9 @@ export class Server {
             const message: DrawCellsMessage = { type: MessageType.DrawCells, color, cells };
             const data = serializeMessage(message);
             this._wsServer.clients.forEach(c => c.send(data));
-            this.udpBroadcast(data);
+            this._udpServer.broadcast(data);
         };
 
-        this._udpServer.on('error', err => console.error(err));
 
         this._events.on('setcell', (cell: Cell, alive: boolean) => setCellHandler(cell, alive));
         this._events.on('drawcells', (color: string, cells: Point[]) => drawCellsHandler(color, cells));
@@ -136,25 +115,14 @@ export class Server {
         const data = serializeMessage(message);
         console.log('connections: ' + message.count );
         this._wsServer.clients.forEach(client => client.send(data));
-        this.udpBroadcast(data);
+        this._udpServer.broadcast(data);
     }
 
-    private udpBroadcast(data: Buffer) {
-        this._udpClients.forEach(c => this._udpServer.send(data, c.port, c.address, err => {
-            if (err) {
-                this._udpClients.delete(c);
-                console.error(err);
-            }
-        }));
-    }
 
     async run() {
         const http = new Promise((resolve) => this._httpServer.on('close', () => resolve()));
         this._httpServer.listen(5000, 'localhost', () => console.log('HTTP listening on localhost 5000'));
-        
-        const udp = new Promise((resolve) => this._udpServer.on('close', () => resolve()));
-        this._udpServer.bind(UDP_PORT, () => console.log('UDP socket bound on 31337'));
-
+        const udp = this._udpServer.listen(UDP_PORT);
         await Promise.all([http, udp]);
     }
 
