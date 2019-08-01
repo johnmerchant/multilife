@@ -4,7 +4,7 @@ export class UdpServer {
 
     private _clients = new Set<dgram.RemoteInfo>();
     private _timeout = new Map<dgram.RemoteInfo, number>();
-    private _socket = dgram.createSocket('udp4', this.receive);
+    private _socket = dgram.createSocket('udp4', (msg: Buffer, rinfo: dgram.RemoteInfo) => this.receive(msg, rinfo));
 
     constructor() {
         this._socket.on('error', err => console.error(err));
