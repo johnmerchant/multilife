@@ -139,7 +139,6 @@ const GameComponent = ({ world, range, sendDrawCells, color, playerCount }: Prop
         const currentDrawingState = drawingStateRef.current;
 
         if (currentDrawingState.points.length > 0) {
-            drawCells(color, currentDrawingState.points);
             sendDrawCells(color, currentDrawingState.points);
         }
         const nextState = {
