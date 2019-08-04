@@ -1,9 +1,20 @@
 import * as dgram from 'dgram';
 
+interface Client {
+    address: string;
+    port: number;
+}
+
+const clientKey = (client: Client) => `${client.address}:${client.port}`;
+const clientInfo = (str: string): Client => {
+    const [address, port] = str.split(':');
+    return { address, port: parseInt(port) };
+};
+
 export class UdpServer {
 
-    private _clients = new Set<dgram.RemoteInfo>();
-    private _timeout = new Map<dgram.RemoteInfo, number>();
+    private _clients = new Set<string>();
+    private _timeout = new Map<string, number>();
     private _socket = dgram.createSocket('udp4', (msg: Buffer, rinfo: dgram.RemoteInfo) => this.receive(msg, rinfo));
 
     constructor() {
@@ -11,9 +22,9 @@ export class UdpServer {
     }
 
     broadcast(data: Buffer) {
-        this._clients.forEach(c => this._socket.send(data, c.port, c.address, err => {
+        [...this._clients].map(clientInfo).forEach(c => this._socket.send(data, c.port, c.address, err => {
             if (err) {
-                this._clients.delete(c);
+                this._clients.delete(clientKey(c));
                 console.error(err);
             }
         }));
@@ -21,22 +32,23 @@ export class UdpServer {
     
     private receive(msg: Buffer, rinfo: dgram.RemoteInfo) {
         const status = msg.readUInt8(0);
+        const key = clientKey(rinfo);
         if (status) { // available
-            if (!this._clients.has(rinfo)) {    
-                this._clients.add(rinfo);
+            if (!this._clients.has(key)) {    
+                this._clients.add(key);
             }
-            if (this._timeout.has(rinfo)) {
-                clearTimeout(this._timeout.get(rinfo));
+            if (this._timeout.has(key)) {
+                clearTimeout(this._timeout.get(key));
             }
             setTimeout(() => {
-                this._clients.delete(rinfo);
-                this._timeout.delete(rinfo);
+                this._clients.delete(key);
+                this._timeout.delete(key);
             }, 1000 * 60);
         } else { // unavailable
-            this._clients.delete(rinfo);
-            if (this._timeout.has(rinfo)) {
-                clearTimeout(this._timeout.get(rinfo));
-                this._timeout.delete(rinfo);
+            this._clients.delete(key);
+            if (this._timeout.has(key)) {
+                clearTimeout(this._timeout.get(key));
+                this._timeout.delete(key);
             }
         }
     }
