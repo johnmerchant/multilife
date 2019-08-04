@@ -22,7 +22,9 @@ export class UdpServer {
     private receive(msg: Buffer, rinfo: dgram.RemoteInfo) {
         const status = msg.readUInt8(0);
         if (status) { // available
-            this._clients.add(rinfo);
+            if (!this._clients.has(rinfo)) {    
+                this._clients.add(rinfo);
+            }
             if (this._timeout.has(rinfo)) {
                 clearTimeout(this._timeout.get(rinfo));
             }
