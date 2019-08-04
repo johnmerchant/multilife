@@ -14,7 +14,6 @@ const clientInfo = (str: string): Client => {
 export class UdpServer {
 
     private _clients = new Set<string>();
-    private _timeout = new Map<string, number>();
     private _socket = dgram.createSocket('udp4', (msg: Buffer, rinfo: dgram.RemoteInfo) => this.receive(msg, rinfo));
 
     constructor() {
@@ -37,19 +36,8 @@ export class UdpServer {
             if (!this._clients.has(key)) {    
                 this._clients.add(key);
             }
-            if (this._timeout.has(key)) {
-                clearTimeout(this._timeout.get(key));
-            }
-            setTimeout(() => {
-                this._clients.delete(key);
-                this._timeout.delete(key);
-            }, 1000 * 60);
         } else { // unavailable
             this._clients.delete(key);
-            if (this._timeout.has(key)) {
-                clearTimeout(this._timeout.get(key));
-                this._timeout.delete(key);
-            }
         }
     }
 
