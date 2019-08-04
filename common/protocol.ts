@@ -21,9 +21,9 @@ import { rgbToHex, hexToRgb } from "./color";
 
 const COLOR_LENGTH = 12;
 const POINT_LENGTH = 2;
-const CELL_HEADER_LENGTH = 1 + POINT_LENGTH;
-const CELL_LENGTH = CELL_HEADER_LENGTH + COLOR_LENGTH;
+const CELL_LENGTH = POINT_LENGTH + COLOR_LENGTH;
 const DRAW_CELLS_HEADER_LENGTH = 2 + COLOR_LENGTH;
+const UPDATE_HEADER_LENGTH = 3;
 
 export const MAX_DRAW_CELLS_LENGTH = 255;
 export const MAX_UPDATE_LENGTH = 65535;
@@ -64,7 +64,7 @@ const readUpdate = (data: Buffer): UpdateMessage => {
     const length = data.readUInt16LE(1);
     const world: Cell[] = new Array(length);
     for (let i = 0; i < length; ++i) {
-        world[i] = readCell(data, (i * CELL_LENGTH) + CELL_HEADER_LENGTH);
+        world[i] = readCell(data, UPDATE_HEADER_LENGTH + (i * CELL_LENGTH));
     }
     return { type: MessageType.Update, world };
 };
@@ -122,11 +122,11 @@ const writeUpdate = (message: UpdateMessage): Buffer => {
         throw new RangeError(`Max length of update is ${MAX_UPDATE_LENGTH}, received ${message.world.length}`);
     }
 
-    const data = Buffer.alloc(3 + (message.world.length * CELL_LENGTH));
+    const data = Buffer.alloc(UPDATE_HEADER_LENGTH + (message.world.length * CELL_LENGTH));
     data.writeUInt8(MessageType.Update, 0);
     data.writeUInt16LE(message.world.length, 1);
     for (let i = 0; i < message.world.length; ++i) {
-        writeCell(data, (i * CELL_LENGTH) + CELL_HEADER_LENGTH, message.world[i]);
+        writeCell(data, UPDATE_HEADER_LENGTH + (i * CELL_LENGTH), message.world[i]);
     }
     return data;
 };
