@@ -38,7 +38,7 @@
     "@types/react-dom": "^16.8.5",
     "@types/react-redux": "^7.1.1",
     "@types/react-share": "^2.1.1",
-    "@types/ws": "^6.0.1",
+    "@types/ws": "^6.0.2",
     "cpx": "^1.5.0",
     "jest": "^24.8.0",
     "parcel": "^1.12.3",
