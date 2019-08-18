@@ -11,7 +11,7 @@
     "blob-to-buffer": "^1.2.8",
     "color": "^3.1.2",
     "color-namer": "https://github.com/jmercha/color-namer.git",
-    "react": "^16.8.6",
+    "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-github-corner": "^2.3.0",
     "react-redux": "^7.0.3",
