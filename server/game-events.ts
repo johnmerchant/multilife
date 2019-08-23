@@ -10,7 +10,7 @@ declare interface IGameEvents {
     on(event: 'drawcells', listener: (color: string, cells: Point[]) => void): this;
 }
 
-const INTERVAL = 1000;
+const INTERVAL = 500;
 
 /**
  * Handles changes in Game State 
