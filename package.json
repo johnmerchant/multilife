@@ -10,7 +10,7 @@
     "@emotion/core": "^10.0.16",
     "blob-to-buffer": "^1.2.8",
     "color": "^3.1.2",
-    "color-namer": "https://github.com/jmercha/color-namer.git",
+    "color-namer": "^1.4.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-github-corner": "^2.3.0",
