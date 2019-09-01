@@ -7,6 +7,10 @@ Basically, an interactive multiplayer digital lava lamp.
 
 ![](https://media.giphy.com/media/RJtJARbIYPjuoBrX22/giphy.gif)
 
+## MultiLife RGB
+
+MutliLife can rendered to an RGB LED matrix panel using a Raspberry Pi with [multilife-rgb](https://github.com/jmercha/multilife-rgb).
+
 ## Dependencies
 
 * Node.js v12
