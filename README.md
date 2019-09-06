@@ -3,7 +3,7 @@
 
 An experiment in realtime cellular automata. 
 
-See the [dev.to post](https://dev.to/jmercha/conway-s-game-of-life-with-friends-3jj9)
+See my [DEV Community](https://dev.to/jmercha/conway-s-game-of-life-with-friends-3jj9) post for the story behind this.
 
 Basically, an interactive multiplayer digital lava lamp.
 
