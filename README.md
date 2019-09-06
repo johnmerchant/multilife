@@ -3,6 +3,8 @@
 
 An experiment in realtime cellular automata. 
 
+See the [dev.to post](https://dev.to/jmercha/conway-s-game-of-life-with-friends-3jj9)
+
 Basically, an interactive multiplayer digital lava lamp.
 
 ![](https://media.giphy.com/media/RJtJARbIYPjuoBrX22/giphy.gif)
