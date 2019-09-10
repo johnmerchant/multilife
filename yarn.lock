@@ -1161,10 +1161,10 @@
     hoist-non-react-statics "^3.3.0"
     redux "^4.0.0"
 
-"@types/react-share@^2.1.1":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@types/react-share/-/react-share-2.1.1.tgz#0b6b6c73440f6100745db832d69bb0d639f8ccf4"
-  integrity sha512-xIWTe2lveY2wPJgbxw/DAJgroNLEvXFr9doahGjWIdQdIacB2wBXa4Yiwi6EJI2YWuJi6tN/z43q1rzq+7pdpg==
+"@types/react-share@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@types/react-share/-/react-share-3.0.0.tgz#8d9946746e409f9ce763da12b06a7d40f1544973"
+  integrity sha512-onMab5SH6/55bTuzab7EBqHzihLoi+KgWCebhGWfyrXPkMbQ9TanAQQVUC/3G2jsx3BlwiSRYJ3wNj4uhxVAGQ==
   dependencies:
     "@types/react" "*"
 
