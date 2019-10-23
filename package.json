@@ -7,7 +7,7 @@
   "author": "John Merchant <john@merchant.on.net>",
   "license": "MIT",
   "dependencies": {
-    "@emotion/core": "^10.0.17",
+    "@emotion/core": "^10.0.22",
     "blob-to-buffer": "^1.2.8",
     "color": "^3.1.2",
     "color-namer": "^1.4.0",
