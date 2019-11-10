@@ -1,6 +1,7 @@
 import { AnyAction, Reducer } from "redux";
+import produce from "immer";
 import { World, Message, Range, isUpdateMessage, isSetCellMessage, isColorMessage, ColorRanking, isPlayerCountMessage, isDrawCellsMessage } from "../../models";
-import { range, setCell, createLookup, setCells } from "../../common/world";
+import { range, setCell, setCells } from "../../common/world";
 import { colorName, colorRanking } from "../../common/color";
 import { WS_RECEIVE, WS_SEND } from "../actions/socket";
 
@@ -17,42 +18,41 @@ export interface GameState {
 
 export const initialState: GameState = { };
 
-export const game: Reducer<GameState> = (state = initialState, action: AnyAction) => {
+export const game: Reducer<GameState> = produce((state: GameState, action: AnyAction) => {
     switch (action.type) {
         case WS_SEND:
         case WS_RECEIVE:
-            return handleMessage(state, action.message);
+            handleMessage(state, action.message);
+            break;
     }
-    return {...state};
-}
+}, initialState);
 
 const handleMessage = (state: GameState, message: Message) => {
     if (isUpdateMessage(message)) {
-        let world = message.world;
         if (state.drawnCells) {
-            world = setCells(world || [], state.drawnCells);
+            state.world = setCells(message.world || [], state.drawnCells);
         }
-        return { ...state, drawnCells: undefined, world, ...reduceWorld(world) };
+        delete state.drawnCells;
+        updateState(state);
     } else if (isSetCellMessage(message)) {
         const {cell, alive} = message;
-        const world = setCell(state.world || [], cell, alive);
-        return { ...state, world, ...reduceWorld(world) };
-    }
-    else if (isColorMessage(message)) {
-        return {...state, color: message.color, colorName: colorName(message.color) };
-    } 
-    else if (isPlayerCountMessage(message)) {
-        return {...state, playerCount: message.count };
+        state.world = setCell(state.world || [], cell, alive);
+        updateState(state);
+    } else if (isColorMessage(message)) {
+        state.color = message.color;
+        state.colorName = colorName(message.color);
+    } else if (isPlayerCountMessage(message)) {
+        state.playerCount = message.count;
     } else if (isDrawCellsMessage(message)) {
-        const drawnCells = message.cells.map(({x, y}) => ({ x, y, color: message.color }));
-        const world = setCells(state.world || [], drawnCells);
-        return {...state, drawnCells, world, ...reduceWorld(world) };
+        state.drawnCells = message.cells.map(({x, y}) => ({ x, y, color: message.color }));
+        state.world = setCells(state.world || [], state.drawnCells);
+        updateState(state);
     }
-    return {...state};
 }
 
-const reduceWorld = (world: World) => ({
-    colorRanking: colorRanking(world),
-    range: range(world),
-    lookup: createLookup(world)
-});
+const updateState = (draft: GameState) => {
+    if (draft.world) {
+        draft.colorRanking = colorRanking(draft.world);
+        draft.range = range(draft.world);
+    }
+};

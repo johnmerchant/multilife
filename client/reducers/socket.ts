@@ -1,13 +1,20 @@
+import produce from "immer";
 import { Reducer } from "redux";
 import { WS_OPEN, WS_CLOSE } from "../actions/socket";
+
 export interface SocketState {
     isConnected: boolean;
 }
 
-export const socket: Reducer<SocketState> = (state = { isConnected: false }, action) => {
+const initialState: SocketState = { isConnected: false };
+
+export const socket: Reducer<SocketState> = produce((state, action) => {
     switch (action.type) {
-        case WS_OPEN: return { ...state, isConnected: true };
-        case WS_CLOSE: return { ...state, isConnected: false };
-        default: return { ...state };
+        case WS_OPEN: 
+            state.isConnected = true;
+            return;
+        case WS_CLOSE:
+            state.isConnected = false;
+            return;
     }
-};
+}, initialState);

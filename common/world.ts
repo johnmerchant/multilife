@@ -1,4 +1,5 @@
-import { Cell, World, WorldLookup, Point, ColorRanking } from "../models";
+import produce from "immer";
+import { Cell, World, WorldLookup, Point } from "../models";
 
 export const MAX_X = 32;
 export const MAX_Y = 32;
@@ -29,24 +30,31 @@ export function *cells(world: World): IterableIterator<Point> {
     }
 }
 
+export interface Range {
+    min: Point;
+    max: Point;
+}
+
+const reduceRange = produce((range: Range, point: Point) => {
+    if (point.x < range.min.x) range.min.x = point.x;
+    if (point.y < range.min.y) range.min.y = point.y;
+    if (point.x > range.max.x) range.max.x = point.x;
+    if (point.y > range.max.y) range.max.y = point.y
+});
+
+const expandRange = produce((range: Range) => {
+    range.min.x--;
+    range.min.y--;
+    range.max.x++;
+    range.max.y++;
+});
+
 /**
  * Reduces the World state into the minimum and maximum known cooridnates of living Cells.
  */
-export function range(world: World): { min: Point, max: Point } {
-
-    // aggregate min and max coordinates
-    let {min, max} = world.reduce(({min, max}, cell) => ({ 
-        min: { x: cell.x < min.x ? cell.x : min.x, y: cell.y < min.y ? cell.y : min.y },
-        max: { x: cell.x > max.x ? cell.x : max.x, y: cell.y > max.y ? cell.y : max.y }
-    }), { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } });
-
-    // expand the edge of the world by 1 cell, this lets us detect dead cells on the edge
-    min.x--;
-    min.y--;
-    max.x++;
-    max.y++;
-
-    return {min, max};
+export function range(world: World): Range {
+    const range = world.reduce(reduceRange, { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } });
+    return expandRange(range);
 }
 
 /**

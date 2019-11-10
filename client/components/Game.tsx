@@ -175,7 +175,6 @@ const GameComponent = ({ world, range, sendDrawCells, color, playerCount }: Prop
     </div>;
 };
 
-
 export const Game = connect(
     ({ game }: State) => ({ world: game.world, range: game.range, color: game.color, playerCount: game.playerCount }),
     (dispatch: Dispatch) => ({ 
