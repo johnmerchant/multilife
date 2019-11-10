@@ -6,7 +6,7 @@ CONTAINER_NAME="multilife.live"
 docker pull $DOCKER_IMAGE
 docker stop $CONTAINER_NAME || true && docker rm $CONTAINER_NAME || true
 
-docker run --name $CONTAINER_NAME \ 
+docker run --name $CONTAINER_NAME \
     --net="host" \
     -v /etc/nginx/ \
     -v /etc/ssl/certs/ \
