@@ -44,4 +44,4 @@ jobs:
       - deploy:
           command: 
               scp -o StrictHostKeyChecking=no deploy.sh $SSH_USER@$SSH_HOST/tmp/deploy.sh 
-              ssh -t $SSH_USER@$SSH_HOST "/tmp/deploy.sh $IMAGE_NAME:$TAG"
+              ssh -t $SSH_USER@$SSH_HOST "/tmp/deploy.sh" $IMAGE_NAME:$TAG
