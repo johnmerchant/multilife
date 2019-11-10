@@ -40,7 +40,7 @@ RUN rm -rf /var/lib/apt/lists/*
 RUN yarn global add pm2
 
 # copy app dist
-COPY --from=build /app/dist /app/entrypoint.sh /app/node_modules /app/
+COPY --from=build /app/dist /app/entrypoint.sh /app/process.yml /app/node_modules /app/
 
 # purge yarn cache
 RUN yarn cache clean
@@ -52,4 +52,3 @@ COPY nginx.conf /etc/nginx/sites-enabled/multilife.live
 EXPOSE 80 443 31337/udp
 
 ENTRYPOINT "./entrypoint.sh"
-
