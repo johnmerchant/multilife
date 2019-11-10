@@ -121,7 +121,7 @@ export class Server {
 
     async run() {
         const httpPromise = new Promise((resolve) => this._httpServer.on('close', () => resolve()));
-        this._httpServer.listen(HTTP_PORT, 'localhost', () => console.log('HTTP listening on ' + UDP_PORT));
+        this._httpServer.listen(HTTP_PORT, 'localhost', () => console.log('HTTP listening on ' + HTTP_PORT));
         const udpPromise = this._udpServer.listen(UDP_PORT);
         await Promise.all([httpPromise, udpPromise]);
     }
