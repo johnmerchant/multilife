@@ -36,8 +36,11 @@ RUN apt-get install -y \
 # purge apt cache
 RUN rm -rf /var/lib/apt/lists/* 
 
+# install pm2
 RUN yarn global add pm2
-COPY --from=build /app /app
+
+# copy app dist
+COPY --from=build /app/dist /app/node_modules /app/
 
 # purge yarn cache
 RUN yarn cache clean
