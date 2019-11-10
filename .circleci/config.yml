@@ -43,4 +43,4 @@ jobs:
             - "5f:4b:4d:22:00:2b:63:3f:6b:32:14:db:03:16:9e:6f"
       - deploy:
           command: 
-              ssh -vvv $SSH_USER@$SSH_HOST $IMAGE_NAME:$TAG < ./deploy.sh "jmercha/$IMAGE_NAME:$TAG"
+              ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST $IMAGE_NAME:$TAG < ./deploy.sh "jmercha/$IMAGE_NAME:$TAG"
