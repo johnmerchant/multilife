@@ -1,4 +1,4 @@
-FROM ubuntu:latest AS base
+FROM ubuntu:19.10 AS base
 
 # setup base
 
@@ -36,9 +36,8 @@ RUN apt-get install -y \
 
 # purge apt cache
 RUN rm -rf /var/lib/apt/lists/*
-
 RUN yarn global add pm2
-
 COPY --from=build /app /app
 WORKDIR /app
+
 ENTRYPOINT "./entrypoint.sh"
