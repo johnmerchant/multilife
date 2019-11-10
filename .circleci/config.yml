@@ -1,6 +1,10 @@
 version: 2
 jobs:
   build:
+    
+    machine:
+      docker_layer_caching: true
+
     docker:
       - image: circleci/node:13
 
@@ -27,6 +31,8 @@ jobs:
             - ~/.cache/yarn
 
       - run: yarn test
+
+      # Build container and deploy to prod
       - setup_remote_docker:
           docker_layer_caching: true
       - run:
