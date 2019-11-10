@@ -1,28 +1,31 @@
+import produce from "immer";
 import color from 'color';
-import { World, ColorRanking } from '../models';
+import { World, ColorRanking, ColorRank, Cell } from '../models';
 import colorNamer from 'color-namer';
 
 /** Generates a random color */
 export const randomColor = () => color.hsl(rand(0, 360), 100, rand(40, 65)).hex();
+
+
+const reduceRanking = produce((map: Map<string, ColorRank>, cell: Cell) => {
+    const name = colorName(cell.color);
+    let rank = map.get(name);
+    if (rank) {
+        rank.count += 1;
+    } else {
+        rank = { color: cell.color, name, count: 1 };
+    }
+    map.set(name, rank);
+});
+
 
 /**
  * Gets color ranking from a World
  * @param world The World
  */
 export const colorRanking = (world: World): ColorRanking => 
-    [...world
-        .map(({ color }) => ({ color, name: colorName(color) }))
-        .reduce((map, {color, name}) => {
-            let data = map.get(name);
-            if (data) {
-                data.count += 1;
-            } else {
-                data = {color, count: 1};
-            }
-            return map.set(name, data);
-        }, new Map<string, { color: string, count: number }>())
-    ].map(kvp => ({ name: kvp[0], ...kvp[1] }))
-    .sort((x, y) => y.count - x.count);
+    [...world.reduce(reduceRanking, new Map<string, ColorRank>()).values()]
+        .sort((x, y) => y.count - x.count);
 
 /**
  * Gives a HTML color a name
@@ -55,7 +58,6 @@ export const hexToRgb = (hex: string) => {
 const rand = (min: number, max: number): number => Math.random() * (max - min) + min;
 
 const mixCache = new WeakMap<string[], string>();
-
 /**
  * Combines colors
  * @param colors colors to mix
