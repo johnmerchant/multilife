@@ -38,6 +38,10 @@ RUN rm -rf /var/lib/apt/lists/*
 
 RUN yarn global add pm2
 COPY --from=build /app /app
+
+# purge yarn cache
+RUN yarn cache clean
+
 WORKDIR /app
 
 COPY nginx.conf /etc/nginx/sites-enabled/multilife.live
