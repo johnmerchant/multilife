@@ -29,8 +29,9 @@ export const game: Reducer<GameState> = produce((state: GameState, action: AnyAc
 
 const handleMessage = (state: GameState, message: Message) => {
     if (isUpdateMessage(message)) {
+        state.world = message.world;
         if (state.drawnCells) {
-            state.world = setCells(message.world || [], state.drawnCells);
+            state.world = setCells(state.world || [], state.drawnCells);
         }
         delete state.drawnCells;
         updateState(state);
@@ -50,9 +51,9 @@ const handleMessage = (state: GameState, message: Message) => {
     }
 }
 
-const updateState = (draft: GameState) => {
-    if (draft.world) {
-        draft.colorRanking = colorRanking(draft.world);
-        draft.range = range(draft.world);
+const updateState = (state: GameState) => {
+    if (state.world) {
+        state.colorRanking = colorRanking(state.world);
+        state.range = range(state.world);
     }
 };

@@ -32,7 +32,6 @@ export class GameEvents extends EventEmitter implements IGameEvents {
     }
 
     private drawCells(color: string, cells: Point[]) {
-        console.log({color, cells});
         this._game = this._game.drawCells(color, cells);
     }
 
