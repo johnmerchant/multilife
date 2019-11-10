@@ -1,10 +1,9 @@
 #!/bin/bash
-########################################
 
 set -e
 
 DOCKER_IMAGE=$1
-CONAINER_NAME="multilife"
+CONAINER_NAME="jmercha/multilife"
 
 #Check for running container & stop it before starting a new one
 if [ $(docker inspect -f '{{.State.Running}}' $CONAINER_NAME) = "true" ]; then
