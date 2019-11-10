@@ -40,7 +40,7 @@ RUN rm -rf /var/lib/apt/lists/*
 RUN yarn global add pm2
 
 # copy app dist
-COPY --from=build /app/dist /app/node_modules /app/
+COPY --from=build /app/dist /app/entrypoint.sh /app/node_modules /app/
 
 # purge yarn cache
 RUN yarn cache clean
