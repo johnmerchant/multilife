@@ -3,7 +3,7 @@
 set -e
 
 DOCKER_IMAGE=$1
-CONAINER_NAME="multilife.live"
+CONTAINER_NAME="multilife.live"
 
 docker stop $CONTAINER_NAME
 docker rm $CONTAINER_NAME
