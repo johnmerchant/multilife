@@ -42,20 +42,19 @@ const reduceRange = produce((range: Range, point: Point) => {
     if (point.y > range.max.y) range.max.y = point.y
 });
 
+const expandRange = produce((range: Range) => {
+    range.min.x--;
+    range.min.y--;
+    range.max.x++;
+    range.max.y++;
+});
+
 /**
  * Reduces the World state into the minimum and maximum known cooridnates of living Cells.
  */
 export function range(world: World): Range {
-    
-    const result = world.reduce(reduceRange, { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } });
-
-    // expand the edge of the world by 1 cell, this lets us detect dead cells on the edge
-    result.min.x--;
-    result.min.y--;
-    result.max.x++;
-    result.max.y++;
-
-    return result;
+    const range = world.reduce(reduceRange, { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } });
+    return expandRange(range);
 }
 
 /**
