@@ -57,6 +57,9 @@ export const hexToRgb = (hex: string) => {
  */
 const rand = (min: number, max: number): number => Math.random() * (max - min) + min;
 
+/**
+ * Caches values of the mix fn
+ */
 const mixCache = new WeakMap<string[], string>();
 /**
  * Combines colors

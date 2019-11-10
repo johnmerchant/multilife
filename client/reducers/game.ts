@@ -16,9 +16,7 @@ export interface GameState {
     playerCount?: number;
 }
 
-export const initialState: GameState = { 
-
-};
+export const initialState: GameState = { };
 
 export const game: Reducer<GameState> = produce((state: GameState, action: AnyAction) => {
     switch (action.type) {
