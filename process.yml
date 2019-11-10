@@ -1,4 +1,4 @@
 apps:
-  - script   : /home/multilife/dist/server/server/index.js
+  - script   : /app/server/index.js
     instances: 1
     exec_mode: fork

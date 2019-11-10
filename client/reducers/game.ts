@@ -1,5 +1,5 @@
 import { AnyAction, Reducer } from "redux";
-import { World, Message, Range, isUpdateMessage, isSetCellMessage, isColorMessage, ColorRanking, isPlayerCountMessage, isDrawCellsMessage, Cell } from "../../models";
+import { World, Message, Range, isUpdateMessage, isSetCellMessage, isColorMessage, ColorRanking, isPlayerCountMessage, isDrawCellsMessage } from "../../models";
 import { range, setCell, createLookup, setCells } from "../../common/world";
 import { colorName, colorRanking } from "../../common/color";
 import { WS_RECEIVE, WS_SEND } from "../actions/socket";

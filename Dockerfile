@@ -34,12 +34,15 @@ RUN apt-get install -y \
     python-certbot-nginx
 
 # purge apt cache
-RUN rm -rf /var/lib/apt/lists/*
+RUN rm -rf /var/lib/apt/lists/* 
+
 RUN yarn global add pm2
 COPY --from=build /app /app
 WORKDIR /app
 
-EXPOSE 80 443
+COPY nginx.conf /etc/nginx/sites-enabled/multilife.live
+
+EXPOSE 80 443 31337/udp
 
 ENTRYPOINT "./entrypoint.sh"
 

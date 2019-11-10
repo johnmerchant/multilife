@@ -1,6 +1,5 @@
 import * as http from 'http';
 import * as ws from 'ws';
-import * as dgram from 'dgram';
 import { GameEvents } from './game-events';
 import { randomColor } from '../common/color';
 import { 
@@ -21,7 +20,8 @@ import {
 import { deserializeMessage, serializeMessage } from '../common/protocol';
 import { UdpServer } from './udp';
 
-const UDP_PORT = 31337;
+const HTTP_PORT = parseInt(process.env.MULTILIFE_HTTP_PORT || '5000');
+const UDP_PORT = parseInt(process.env.MULTILIFE_UDP_PORT || '31337');
 
 export class Server {
 
@@ -120,10 +120,10 @@ export class Server {
 
 
     async run() {
-        const http = new Promise((resolve) => this._httpServer.on('close', () => resolve()));
-        this._httpServer.listen(5000, 'localhost', () => console.log('HTTP listening on localhost 5000'));
-        const udp = this._udpServer.listen(UDP_PORT);
-        await Promise.all([http, udp]);
+        const httpPromise = new Promise((resolve) => this._httpServer.on('close', () => resolve()));
+        this._httpServer.listen(HTTP_PORT, 'localhost', () => console.log('HTTP listening on ' + UDP_PORT));
+        const udpPromise = this._udpServer.listen(UDP_PORT);
+        await Promise.all([httpPromise, udpPromise]);
     }
 
 }
