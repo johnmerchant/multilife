@@ -31,7 +31,8 @@ jobs:
             - ~/.cache/yarn
 
       - run: yarn test
-
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: Docker push
           command: |
@@ -43,5 +44,5 @@ jobs:
             - "5f:4b:4d:22:00:2b:63:3f:6b:32:14:db:03:16:9e:6f"
       - deploy:
           command: |
-            scp -o "StrictHostKeyChecking=no" deploy.sh $SSH_USER@$SSH_HOST:/tmp/deploy.sh
-            ssh $SSH_USER@$SSH_HOST /tmp/deploy.sh
+              scp -o "StrictHostKeyChecking=no" deploy.sh $SSH_USER@$SSH_HOST:/tmp/deploy.sh
+              ssh $SSH_USER@$SSH_HOST /tmp/deploy.sh
