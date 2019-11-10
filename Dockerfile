@@ -1,4 +1,4 @@
-FROM ubuntu:19.10 AS base
+FROM ubuntu:19.04 AS base
 
 # setup base
 
@@ -40,4 +40,7 @@ RUN yarn global add pm2
 COPY --from=build /app /app
 WORKDIR /app
 
+EXPOSE 80 443
+
 ENTRYPOINT "./entrypoint.sh"
+
