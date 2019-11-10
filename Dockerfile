@@ -16,7 +16,6 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y nodejs yarn
 # build multilife
 FROM base AS build
 RUN apt-get install -y build-essential
-RUN apt-get remove -y cmdtest
 RUN mkdir /app
 WORKDIR /app
 ADD package.json yarn.lock ./
