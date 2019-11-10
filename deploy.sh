@@ -5,8 +5,7 @@ set -e
 DOCKER_IMAGE=$1
 CONTAINER_NAME="multilife.live"
 
-docker stop $CONTAINER_NAME
-docker rm $CONTAINER_NAME
+docker stop $CONTAINER_NAME || true && docker rm $CONTAINER_NAME || true
 docker run --name $CONTAINER_NAME \ 
     --net="host" \
     -v /etc/nginx/ \
