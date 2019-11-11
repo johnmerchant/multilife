@@ -8,8 +8,6 @@ docker stop $CONTAINER_NAME || true && docker rm $CONTAINER_NAME || true
 
 docker run --name $CONTAINER_NAME \
     --net="host" \
-    -v nginx:/etc/nginx/ \
-    -v certs:/etc/ssl/certs/ \
     -v letsencrypt:/etc/letsencrypt/ \
     --restart=always \
     -d $DOCKER_IMAGE
