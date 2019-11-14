@@ -49,5 +49,6 @@ jobs:
           command: ssh -nNT -o StrictHostKeyChecking=no -L $(pwd)/docker.sock:/var/run/docker.sock $SSH_USER@$SSH_HOST
           background: true
       - deploy:
-          command:
+          command: |
+            export DOCKER_HOST=$(pwd)/docker.sock
             docker-compose up -d
