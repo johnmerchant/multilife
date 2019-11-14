@@ -1,6 +1,6 @@
 FROM node:13.1.0-alpine
 
-RUN apk add --no-cache make gcc g++ python
+RUN apk add --no-cache make gcc g++ python util-linux
 RUN mkdir /app
 WORKDIR /app
 ADD package.json yarn.lock ./
