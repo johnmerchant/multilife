@@ -50,4 +50,4 @@ jobs:
           background: true
       - deploy:
           command: |
-            docker-compose -H $(pwd)/docker.sock up -d
+            docker-compose -H unix://$(pwd)/docker.sock up -d
