@@ -50,4 +50,4 @@ jobs:
           background: true
       - deploy:
           command: |
-            docker-compose up -d -H ssh://$SSH_USER@$SSH_HOST up
+            docker-compose -H ssh://$SSH_USER@$SSH_HOST up -d
