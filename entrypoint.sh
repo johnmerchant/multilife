@@ -1,5 +1,3 @@
 #!/bin/sh
-service nginx start
-certbot --nginx -d multilife.live,www.multilife.live -n -m john@merchant.on.net --agree-tos
-cd /app
-pm2 start process.yml --no-daemon
+
+node /app/dist/server/server/index.js

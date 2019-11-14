@@ -1,5 +1,6 @@
-FROM jmercha/ubuntu:19.04-node-13-build
+FROM node:13.1.0-alpine
 
+RUN apk add --no-cache make gcc g++ python
 RUN mkdir /app
 WORKDIR /app
 ADD package.json yarn.lock ./
@@ -8,10 +9,9 @@ ADD . .
 RUN yarn build
 RUN yarn cache clean
 
-FROM jmercha/ubuntu:19.04-node-13-nginx-certbot-pm2
+FROM node:13.1.0-alpine
 COPY --from=0 /app /app
 WORKDIR /app
-COPY nginx.conf /etc/nginx/sites-enabled/multilife.live
-EXPOSE 80 443 31337/udp
+EXPOSE 5000 31337/udp
 
 ENTRYPOINT "./entrypoint.sh"
