@@ -50,5 +50,5 @@ jobs:
           background: true
       - deploy:
           command: |
-            export DOCKER_HOST=$(pwd)/docker.sock
+            export DOCKER_HOST=unix://$(pwd)/docker.sock
             docker-compose up -d
