@@ -50,4 +50,4 @@ jobs:
           background: true
       - deploy:
           command: |
-            DOCKER_HOST=$(pwd)/docker.sock docker-compose up -d
+            DOCKER_HOST=http+unix://$(pwd)/docker.sock docker-compose up -d
