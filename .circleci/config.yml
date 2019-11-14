@@ -50,4 +50,4 @@ jobs:
           background: true
       - deploy:
           command: |
-            docker-compose -H ssh://$SSH_USER@$SSH_HOST up -d
+            docker-compose -H $(pwd)/docker.sock up -d
