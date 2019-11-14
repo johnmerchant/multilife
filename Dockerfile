@@ -7,7 +7,6 @@ ADD package.json yarn.lock ./
 RUN yarn --pure-lockfile
 ADD . .
 RUN yarn build
-RUN yarn cache clean
 
 FROM node:13.1.0-alpine
 COPY --from=0 /app /app
