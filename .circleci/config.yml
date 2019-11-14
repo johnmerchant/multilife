@@ -35,6 +35,7 @@ jobs:
             docker build -t $IMAGE_NAME:$TAG -t $IMAGE_NAME:latest .
             echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
             docker push $IMAGE_NAME:$TAG
+            docker push $IMAGE_NAME:latest
       - run:
           name: Install Docker Compose
           command: |
