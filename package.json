@@ -13,7 +13,7 @@
     "color-namer": "^1.4.0",
     "dotenv": "^8.2.0",
     "immer": "^5.0.0",
-    "react": "^16.11.0",
+    "react": "^16.12.0",
     "react-dom": "^16.11.0",
     "react-github-corner": "^2.3.0",
     "react-redux": "^7.1.3",
