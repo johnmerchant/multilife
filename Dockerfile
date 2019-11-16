@@ -1,7 +1,6 @@
 FROM node:13.1.0-alpine
 
-ADD ./install-dependencies.sh install-dependencies.sh
-RUN ./install-dependencies.sh --no-cache
+RUN apk add -u --no-cache make gcc g++ python util-linux 
 
 RUN mkdir /app
 WORKDIR /app
