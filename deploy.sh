@@ -5,7 +5,6 @@ set -e
 COMMIT_SHA1=$CIRCLE_SHA1
 export COMMIT_SHA1=$COMMIT_SHA1
 
-
 envsubst < ./kube/deployment.yml > ./kube/deployment.yml.out
 mv ./kube/deployment.yml.out ./kube/deployment.yml
 

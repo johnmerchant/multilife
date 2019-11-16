@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:13.1
+      - image: node:13.1.0-alpine
 
     working_directory: ~/repo
 
@@ -39,7 +39,7 @@ jobs:
       - run:
           name: Install envsubst
           command: |
-            sudo apt-get update && sudo apt-get -y install gettext-base
+            apk add -u --no-cache gettext curl bash
       - run:
           name: Install kubectl
           command: |
