@@ -3,9 +3,10 @@ jobs:
   build:
     docker:
       - image: node:13.1.0-alpine
-
     working_directory: ~/repo
-
+    shell: /bin/sh -leo pipefail
+    environment:
+       - BASH_ENV: /etc/profile
     steps:
       - checkout
       - setup_remote_docker:
