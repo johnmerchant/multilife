@@ -40,13 +40,13 @@ jobs:
             - ~/.cache/yarn
 
       - run: yarn test
-
+      - run: apk cache clean
       - restore_cache:
           keys: 
-            - apk-cache-deploy
+            - deploy
       - run:
           name: Setup Docker
-          command: apk cache clean && apk add docker gettext curl bash
+          command: apk add docker gettext curl bash
       - run:
           name: Docker push
           command: |
@@ -62,9 +62,9 @@ jobs:
             chmod u+x ./kubectl
       - run:
           name: Deploy Code
-          command: ./scripts/deploy.sh
+          command: ./deploy.sh
       - save_cache:
-          key: apk-cache-deploy
+          key: deploy
           paths:
             - /var/cache/apk
             - /var/lib/docker
