@@ -14,5 +14,6 @@ echo "$KUBERNETES_CLUSTER_CERTIFICATE" | base64 -d > cert.crt
   --kubeconfig=/dev/null \
   --server=$KUBERNETES_SERVER \
   --certificate-authority=cert.crt \
+  --insecure-skip-tls-verify=true
   --token=$KUBERNETES_TOKEN \
   apply -f ./kube/
