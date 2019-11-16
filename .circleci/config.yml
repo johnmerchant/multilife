@@ -60,12 +60,12 @@ jobs:
           command: |
             curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
             chmod u+x ./kubectl
-      - run:
-          name: Deploy Code
-          command: ./deploy.sh
       - save_cache:
           key: deploy
           paths:
             - /var/cache/apk
             - /var/lib/docker
             - ./kubectl
+      - run:
+          name: Deploy
+          command: ./deploy.sh
