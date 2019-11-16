@@ -47,10 +47,6 @@ jobs:
       - run:
           name: Setup Docker
           command: apk cache clean && apk add docker gettext curl bash
-      - save_cache:
-          key: apk-cache-deploy
-          paths:
-            - /var/cache/apk
       - run:
           name: Docker push
           command: |
@@ -67,3 +63,9 @@ jobs:
       - run:
           name: Deploy Code
           command: ./scripts/deploy.sh
+      - save_cache:
+          key: apk-cache-deploy
+          paths:
+            - /var/cache/apk
+            - /var/lib/docker
+            - ./kubectl
