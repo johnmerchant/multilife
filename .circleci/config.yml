@@ -13,8 +13,8 @@ jobs:
       - run:
           name: Setup Environment
           command: |
-            echo 'export TAG=1.0.${CIRCLE_BUILD_NUM}' >> $BASH_ENV
-            echo 'export IMAGE_NAME=jmercha/multilife' >> $BASH_ENV 
+            TAG=1.0.${CIRCLE_BUILD_NUM}
+            IMAGE_NAME=jmercha/multilife 
       - run: apk add --no-cache ca-certificates
       - restore_cache:
           keys: 
@@ -42,15 +42,14 @@ jobs:
 
       - restore_cache:
           keys: 
-            - apk-cache-docker
+            - apk-cache-deploy
       - run:
           name: Setup Docker
-          command: apk cache clean && apk add docker
+          command: apk cache clean && apk add docker gettext curl bash
       - save_cache:
-          key: apk-cache-docker
+          key: apk-cache-deploy
           paths:
             - /var/cache/apk
-
       - run:
           name: Docker push
           command: |
@@ -58,10 +57,6 @@ jobs:
             docker tag $IMAGE_NAME:latest $IMAGE_NAME:$CIRCLE_SHA1
             docker push $IMAGE_NAME:latest
             docker push $IMAGE_NAME:$CIRCLE_SHA1
-      - run:
-          name: Install envsubst
-          command: |
-            apk add -u --no-cache gettext curl bash
       - run:
           name: Install kubectl
           command: |
