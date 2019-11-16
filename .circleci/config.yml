@@ -26,7 +26,7 @@ jobs:
           command: |
             mkdir -p /var/cache/apk
             ln -s /var/cache/apk /etc/apk/cache
-            apk add -u --no-cache make gcc g++ python util-linux 
+            apk add make gcc g++ python util-linux 
       - save_cache:
           key: apk-cache
           paths:
