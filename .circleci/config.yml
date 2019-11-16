@@ -58,8 +58,10 @@ jobs:
       - run:
           name: Install kubectl
           command: |
-            curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-            chmod u+x ./kubectl
+            if [ ! -f "./kubectl" ]; then
+              curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+              chmod u+x ./kubectl
+            fi
       - save_cache:
           key: deploy
           paths:
