@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:11.13.1-stretch
+      - image: circleci/node:11.13.1-buster
 
     working_directory: ~/repo
 
@@ -47,4 +47,4 @@ jobs:
             chmod u+x ./kubectl
       - run:
           name: Deploy Code
-          command: ./scripts/ci-deploy.sh
+          command: ./scripts/deploy.sh
