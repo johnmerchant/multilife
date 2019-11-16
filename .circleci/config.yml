@@ -66,4 +66,5 @@ jobs:
             - /var/cache/apk
             - /var/lib/docker
             - ./kubectl
-      - deploy: ./deploy.sh
+      - deploy: 
+          command: ./deploy.sh
