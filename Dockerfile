@@ -1,7 +1,7 @@
 FROM node:13.1.0-alpine
 
-ADD ./setup.sh setup.sh
-RUN ./setup.sh
+ADD ./install-dependencies.sh install-dependencies.sh
+RUN ./install-dependencies.sh --no-cache
 
 RUN mkdir /app
 WORKDIR /app

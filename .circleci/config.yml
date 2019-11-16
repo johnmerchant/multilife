@@ -15,14 +15,21 @@ jobs:
           command: |
             echo 'export TAG=1.0.${CIRCLE_BUILD_NUM}' >> $BASH_ENV
             echo 'export IMAGE_NAME=jmercha/multilife' >> $BASH_ENV 
+
+      - restore_cache:
+          keys: 
+          - apk-cache
+          - yarn-packages-{{ checksum "yarn.lock" }}
       - run:
           name: Setup
-          command: ./setup.sh
-          
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - yarn-packages-{{ checksum "yarn.lock" }}
+          command: |
+            mkdir -p /var/cache/apk
+            ln -s /var/cache/apk /etc/apk/cache
+            ./install-dependencies.sh
+      - save_cache:
+          key: apk-cache
+          paths:
+            - /var/cache/apk
 
       - run: yarn install --frozen-lockfile
 
@@ -32,6 +39,18 @@ jobs:
             - ~/.cache/yarn
 
       - run: yarn test
+
+      - restore_cache:
+          keys: 
+            - apk-cache-docker
+      - run:
+          name: Setup Docker
+          command: apk cache clean && apk add docker
+      - save_cache:
+          key: apk-cache-docker
+          paths:
+            - /var/cache/apk
+
       - run:
           name: Docker push
           command: |
