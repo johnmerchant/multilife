@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: multilife
+spec:
+  selector:
+    matchLabels:
+      app: multilife
+  template:
+    metadata:
+      labels:
+        app: multilife
+    spec:
+      containers:
+      - image: jmercha/multilife:$COMMIT_SHA1
+        name: multilife
+        ports:
+        - containerPort: 5000
+          name: http
+        - containerPort: 31337
+          name: multilife
+          protocol: UDP

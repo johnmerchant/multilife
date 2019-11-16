@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: multilife
+  annotations:
+    kubernetes.io/ingress.class: "nginx"    
+    cert-manager.io/issuer: "letsencrypt-staging"
+spec:
+  backend:
+    serviceName: multilife
+    servicePort: 31337
+  tls:
+  - hosts:
+    - multilife.live
+    - www.multilife.live
+    secretName: multilife
+  rules:
+  - host: multilife.live
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: multilife
+          servicePort: 80
