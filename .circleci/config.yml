@@ -55,7 +55,7 @@ jobs:
           name: Docker push
           command: |
             echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
-            docket build -t $IMAGE_NAME:latest .
+            docker build -t $IMAGE_NAME:latest .
             docker tag $IMAGE_NAME:latest $IMAGE_NAME:$CIRCLE_SHA1
             docker push $IMAGE_NAME:latest
             docker push $IMAGE_NAME:$CIRCLE_SHA1
