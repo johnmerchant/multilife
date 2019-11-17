@@ -6,9 +6,12 @@ spec:
   selector:
     app: mutlilife
   ports:
-    - port: 80
+    - name: http-static
+      port: 80
       protocol: TCP
-    - port: 5000
+    - name: http-server
+      port: 5000
       protocol: TCP
-    - port: 31337
+    - name: multilife
+      port: 31337
       protocol: UDP
