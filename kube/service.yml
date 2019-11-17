@@ -4,7 +4,10 @@ metadata:
   name: multilife
 spec:
   ports:
-    - name: http
+    - name: http-static
+      port: 80
+      protocol: TCP
+    - name: http-server
       port: 5000
       protocol: TCP
     - name: multilife

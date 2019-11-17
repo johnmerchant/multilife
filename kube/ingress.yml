@@ -18,11 +18,19 @@ spec:
         - path: /
           backend:
             serviceName: multilife
+            servicePort: 80
+        - path: /ws
+          backend:
+            serviceName: multilife
             servicePort: 5000
     - host: www.multilife.live
     - http:
         paths:
         - path: /
+          backend:
+            serviceName: multilife
+            servicePort: 80
+        - path: /ws
           backend:
             serviceName: multilife
             servicePort: 5000
