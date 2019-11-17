@@ -22,6 +22,8 @@ spec:
             mountPath: /usr/share/nginx/html
       - name: multilife-server
         image: jmercha/multilife:$COMMIT_SHA1
+        command: ["/bin/sh"]
+        args: ["-c", "cp -R /app/dist/client/* /www-data/ && node /app/entrypoint.sh"]
         volumeMounts:
         - name: www-data
           mountPath: /www-data
