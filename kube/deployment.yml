@@ -24,7 +24,6 @@ spec:
             mountPath: /usr/share/nginx/html
         ports:
         - containerPort: 80
-          name: http
           protocol: TCP
       - name: multilife-server
         image: jmercha/multilife:$COMMIT_SHA1
@@ -35,8 +34,6 @@ spec:
           mountPath: /www-data
         ports:
         - containerPort: 5000
-          name: http
           protocol: TCP
         - containerPort: 31337
-          name: multilife
           protocol: UDP
