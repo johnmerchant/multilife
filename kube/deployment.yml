@@ -11,9 +11,22 @@ spec:
       labels:
         app: multilife
     spec:
+      volumes:
+      - name: www-data
+        emptyDir: {}
       containers:
-      - image: jmercha/multilife:$COMMIT_SHA1
-        name: multilife
+      - name: multilife-client
+        image: nginx:alpine
+        volumeMounts:
+          - name: www-data
+            mountPath: /usr/share/nginx/html
+      - name: multilife-server
+        image: jmercha/multilife:$COMMIT_SHA1
+      volumeMounts:
+      - name: www-data
+        mountPath: /www-data
+        command: ["/bin/sh"]
+        args: ["-c", "cp -R /app/dist/* /www-data/"]
         ports:
         - containerPort: 5000
           name: http
