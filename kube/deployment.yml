@@ -23,7 +23,7 @@ spec:
       - name: multilife-server
         image: jmercha/multilife:$COMMIT_SHA1
         command: ["/bin/sh"]
-        args: ["-c", "cp -R /app/dist/client/* /www-data/ && node /app/entrypoint.sh"]
+        args: ["-c", "cp -R /app/dist/client/* /www-data/ && /app/entrypoint.sh"]
         volumeMounts:
         - name: www-data
           mountPath: /www-data
