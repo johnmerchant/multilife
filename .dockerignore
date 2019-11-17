@@ -1,1 +1,8 @@
 node_modules
+.circleci
+.cache
+dist
+kube
+deploy.sh
+LICENSE
+README.me
