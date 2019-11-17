@@ -22,11 +22,11 @@ spec:
             mountPath: /usr/share/nginx/html
       - name: multilife-server
         image: jmercha/multilife:$COMMIT_SHA1
+        command: ["/bin/sh"]
+        args: ["-c", "cp -R /app/dist/* /www-data/"]
         volumeMounts:
         - name: www-data
           mountPath: /www-data
-          command: ["/bin/sh"]
-          args: ["-c", "cp -R /app/dist/* /www-data/"]
         ports:
         - containerPort: 5000
           name: http
