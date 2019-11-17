@@ -19,7 +19,6 @@ spec:
           backend:
             serviceName: multilife
             servicePort: 5000
-    
     - host: www.multilife.live
     - http:
         paths:
