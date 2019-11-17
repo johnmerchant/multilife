@@ -4,8 +4,7 @@ metadata:
   name: multilife
 spec:
   ports:
-  - port: 80
-    targetPort: 5000
+  - port: 5000
     protocol: TCP
   selector:
     app: mutlilife

@@ -10,7 +10,7 @@ declare interface IGameEvents {
     on(event: 'drawcells', listener: (color: string, cells: Point[]) => void): this;
 }
 
-const INTERVAL = 500;
+const INTERVAL = parseInt(process.env.MULTILIFE_INTERVAL || '500');
 
 /**
  * Handles changes in Game State 
