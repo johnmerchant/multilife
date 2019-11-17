@@ -3,15 +3,18 @@ kind: Service
 metadata:
   name: multilife
 spec:
+  selector:
+    app: mutlilife
   ports:
     - name: http-static
       port: 80
+      targetPort: 80
       protocol: TCP
     - name: http-server
       port: 5000
+      targetPort: 5000
       protocol: TCP
     - name: multilife
       port: 31337
+      targetPort: 31337
       protocol: UDP
-  selector:
-    app: mutlilife

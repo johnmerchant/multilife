@@ -23,6 +23,7 @@ spec:
         ports:
         - containerPort: 80
           name: http
+          protocol: TCP
       - name: multilife-server
         image: jmercha/multilife:$COMMIT_SHA1
         command: ["/bin/sh"]
@@ -33,6 +34,7 @@ spec:
         ports:
         - containerPort: 5000
           name: http
+          protocol: TCP
         - containerPort: 31337
           name: multilife
           protocol: UDP
