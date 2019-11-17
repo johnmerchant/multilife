@@ -20,6 +20,9 @@ spec:
         volumeMounts:
           - name: www-data
             mountPath: /usr/share/nginx/html
+        ports:
+        - containerPort: 80
+          name: http
       - name: multilife-server
         image: jmercha/multilife:$COMMIT_SHA1
         command: ["/bin/sh"]
