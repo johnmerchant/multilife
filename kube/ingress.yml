@@ -12,8 +12,9 @@ spec:
     - www.multilife.live
     secretName: multilife
   rules:
-    - paths:
-      - path: /
-        backend:
-          serviceName: multilife
-          servicePort: 5000
+    - http:
+        paths:
+        - path: /
+          backend:
+            serviceName: multilife
+            servicePort: 5000
