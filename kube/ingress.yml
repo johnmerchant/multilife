@@ -22,3 +22,10 @@ spec:
         backend:
           serviceName: multilife
           servicePort: 80
+  - host: www.multilife.live
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: multilife
+          servicePort: 80
