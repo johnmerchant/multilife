@@ -43,7 +43,7 @@ export class UdpServer {
 
     listen(port: number) {
         const bind = new Promise((resolve) => this._socket.on('close', () => resolve()));
-        this._socket.bind(port, () => console.log('UDP socket bound on ' + port));
+        this._socket.bind(port, '0.0.0.0', () => console.log('UDP socket bound on ' + port));
         return bind;
     }
     
