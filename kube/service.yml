@@ -6,7 +6,7 @@ metadata:
     app: multilife
 spec:
   selector:
-    app: mutlilife
+    app: multilife
   ports:
     - name: http-static
       port: 80
