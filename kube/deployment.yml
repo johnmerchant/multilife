@@ -26,7 +26,7 @@ spec:
         - containerPort: 80
           protocol: TCP
       - name: multilife-server
-        image: jmercha/multilife:$COMMIT_SHA1
+        image: jmercha/multilife
         command: ["/bin/sh"]
         args: ["-c", "cp -R /app/dist/client/* /www-data/ && /app/entrypoint.sh"]
         volumeMounts:
