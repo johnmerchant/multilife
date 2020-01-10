@@ -1,4 +1,4 @@
-FROM node:13.1.0-alpine
+FROM --platform=$BUILDPLATFORM node:13.1.0-alpine
 
 RUN apk add -u --no-cache make gcc g++ python util-linux 
 
