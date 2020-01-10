@@ -4,18 +4,14 @@ jobs:
   build:
     runs-on: [ubuntu-latest]
     steps:
+    - name: Docker Buildx
+      uses: crazy-max/ghaction-docker-buildx@v1.0.5
     - uses: actions/checkout@v1
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag jmercha/multilife:$(date +%s)
+      run: docker buildx build . --platform linux/amd64,linux/arm64 --t jmercha/multilife:$(date +%s)
     - name: Docker Publish
       uses: manusa/actions-publish-docker@v1.0.1
       with:
         name: jmercha/multilife
         username: ${{ Secrets.DOCKER_USER }}
         password: ${{ Secrets.DOCKER_PASSWORD }}
-    - name: Kubernetes
-      uses: matootie/dokube@v1.2.0
-      with:
-        personalAccessToken: ${{ secrets.DO_TOKEN }}
-        clusterName: ${{ secrets.DO_K8S_CLUSTER }}
-        run: kubectl apply -f ./kube
