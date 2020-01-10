@@ -8,7 +8,7 @@ jobs:
       uses: crazy-max/ghaction-docker-buildx@v1.0.5
     - uses: actions/checkout@v1
     - name: Build the Docker image
-      run: docker buildx build . --platform linux/amd64,linux/arm64 --t jmercha/multilife:$(date +%s)
+      run: docker buildx build . --platform linux/amd64,linux/arm64 --tag jmercha/multilife:$(date +%s)
     - name: Docker Publish
       uses: manusa/actions-publish-docker@v1.0.1
       with:
