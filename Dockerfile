@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM node:13.1.0-alpine
+FROM node:13.1.0-alpine
 
 RUN apk add -u --no-cache make gcc g++ python util-linux 
 
@@ -12,6 +12,6 @@ RUN yarn build
 FROM node:13.1.0-alpine
 COPY --from=0 /app /app
 WORKDIR /app
-EXPOSE 5000 31337/udp
+EXPOSE 80 31337/udp
 
 ENTRYPOINT "./entrypoint.sh"

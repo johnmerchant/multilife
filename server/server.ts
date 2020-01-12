@@ -20,8 +20,8 @@ import {
 import { deserializeMessage, serializeMessage } from '../common/protocol';
 import { UdpServer } from './udp';
 
-const HTTP_PORT = parseInt(process.env.MULTILIFE_HTTP_PORT || '5000');
-const UDP_PORT = parseInt(process.env.MULTILIFE_UDP_PORT || '31337');
+const HTTP_PORT = parseInt(process.env.HTTP_PORT || '80');
+const UDP_PORT = parseInt(process.env.UDP_PORT || '31337');
 
 export class Server {
 
