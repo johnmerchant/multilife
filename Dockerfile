@@ -1,4 +1,5 @@
-FROM node:13.1.0-alpine
+FROM node:13.1.0-alpine AS base
+FROM base AS build
 
 RUN apk add -u --no-cache make g++ python util-linux 
 
@@ -9,9 +10,10 @@ RUN yarn --pure-lockfile
 ADD . .
 RUN yarn build
 
-FROM node:13.1.0-alpine
-COPY --from=0 /app /app
+FROM base
+COPY --from=build /app/dist /app/package.json /app/yarn.lock /app/dist /app/
 WORKDIR /app
+RUN yarn --pure-lockfile --production
 EXPOSE 80 31337/udp
 
 VOLUME /app/dist/client
