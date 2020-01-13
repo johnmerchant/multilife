@@ -28,7 +28,7 @@
     "dev-client": "parcel serve client/index.html --out-dir dist/client",
     "build-server": "tsc --outDir dist/server",
     "build": "npm run clean && npm run build-server && npm run build-client",
-    "dev-server": "npm run clean && npm run build-server && node dist/server/server"
+    "dev-server": "npm run clean && npm run build-server && cross-env HTTP_PORT=5000 node dist/server/server"
   },
   "devDependencies": {
     "@types/blob-to-buffer": "^1.2.0",
@@ -41,6 +41,7 @@
     "@types/react-redux": "^7.1.5",
     "@types/react-share": "^3.0.2",
     "@types/ws": "^6.0.3",
+    "cross-env": "^6.0.3",
     "jest": "^24.9.0",
     "parcel": "^1.12.4",
     "rimraf": "^3.0.0",

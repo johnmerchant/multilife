@@ -1,6 +1,6 @@
 FROM node:13.1.0-alpine
 
-RUN apk add -u --no-cache make gcc g++ python util-linux 
+RUN apk add -u --no-cache make g++ python util-linux 
 
 RUN mkdir /app
 WORKDIR /app
@@ -13,5 +13,7 @@ FROM node:13.1.0-alpine
 COPY --from=0 /app /app
 WORKDIR /app
 EXPOSE 80 31337/udp
+
+VOLUME /app/dist/client
 
 ENTRYPOINT "./entrypoint.sh"
