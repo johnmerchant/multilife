@@ -11,7 +11,9 @@ ADD . .
 RUN yarn build
 
 FROM base
-COPY --from=build /app/dist /app/package.json /app/yarn.lock /app/entrypoint.sh /app/
+COPY --from=build /app/package.json /app/yarn.lock /app/entrypoint.sh /app/
+COPY --from=build /app/dist/server /app/dist/server
+COPY --from=build /app/dist/client /app/dist/client
 WORKDIR /app
 RUN yarn --pure-lockfile --production
 EXPOSE 80 31337/udp
