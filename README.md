@@ -14,7 +14,7 @@ MutliLife can rendered to an RGB LED matrix panel using a Raspberry Pi with [mul
 
 ## Dependencies
 
-* Node.js v13.1
+* Node.js 13
 * yarn
 * A computer with an operating system.
 * Or alternatively, Docker 
