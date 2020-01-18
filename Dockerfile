@@ -18,4 +18,6 @@ WORKDIR /app
 RUN yarn --pure-lockfile --production
 EXPOSE 80 31337/udp
 
+VOLUME /client
+
 ENTRYPOINT "./entrypoint.sh"
