@@ -5,9 +5,10 @@ import toBuffer from 'blob-to-buffer';
 
 const url = () => {
 	const scheme = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-	const hostname = window.location.hostname === 'localhost' ? 'localhost' : ('ws.' + window.location.hostname);
+	const hostname = window.location.hostname === 'localhost' ? 'localhost' : window.location.hostname;
 	const port = window.location.hostname === 'localhost' ? ':5000' : '';
-	return `${scheme}//${hostname}${port}/`;
+	const resource = window.location.hostname === 'localhost' ? '/' : '/ws';
+	return `${scheme}//${hostname}${port}${resource}`;
 };
 
 export const WS_OPEN = 'WS_OPEN';
