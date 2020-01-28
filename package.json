@@ -44,7 +44,7 @@
     "cross-env": "^6.0.3",
     "jest": "^24.9.0",
     "parcel": "^1.12.4",
-    "rimraf": "^3.0.0",
+    "rimraf": "^3.0.1",
     "ts-jest": "^24.1.0",
     "typescript": "^3.7.3"
   }
