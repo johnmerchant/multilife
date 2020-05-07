@@ -1,11 +1,19 @@
 {
   "name": "multilife",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Multiplayer game of life",
   "main": "server.js",
   "repository": "https://github.com/multilife",
-  "author": "John Merchant <john@merchant.on.net>",
-  "license": "MIT",
+  "author": "John Merchant <john@jmercha.dev>",
+  "license": "MIT",  "scripts": {
+    "test": "tsc && jest",
+    "clean": "rimraf dist/",
+    "build-client": "parcel build client/index.html --out-dir dist/client",
+    "dev-client": "parcel serve client/index.html --out-dir dist/client",
+    "build-server": "tsc --outDir dist/server",
+    "build": "npm run clean && npm run build-server && npm run build-client",
+    "dev-server": "npm run clean && npm run build-server && cross-env HTTP_PORT=5000 node dist/server/server"
+  },
   "dependencies": {
     "@emotion/core": "^10.0.27",
     "blob-to-buffer": "^1.2.8",
@@ -20,15 +28,6 @@
     "react-share": "^4.1.0",
     "redux": "^4.0.5",
     "ws": "^7.2.0"
-  },
-  "scripts": {
-    "test": "tsc && jest",
-    "clean": "rimraf dist/",
-    "build-client": "parcel build client/index.html --out-dir dist/client",
-    "dev-client": "parcel serve client/index.html --out-dir dist/client",
-    "build-server": "tsc --outDir dist/server",
-    "build": "npm run clean && npm run build-server && npm run build-client",
-    "dev-server": "npm run clean && npm run build-server && cross-env HTTP_PORT=5000 node dist/server/server"
   },
   "devDependencies": {
     "@types/blob-to-buffer": "^1.2.0",

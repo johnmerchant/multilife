@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {App} from './components/App';
-
 import {enableMapSet} from "immer";
+
+import {App} from './components/App';
 
 enableMapSet()
 
