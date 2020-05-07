@@ -3,7 +3,7 @@
   "version": "1.3.0",
   "description": "Multiplayer game of life",
   "main": "server.js",
-  "repository": "https://github.com/multilife",
+  "repository": "https://github.com/jmercha/multilife",
   "author": "John Merchant <john@jmercha.dev>",
   "license": "MIT", 
   "scripts": {
