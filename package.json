@@ -5,7 +5,8 @@
   "main": "server.js",
   "repository": "https://github.com/multilife",
   "author": "John Merchant <john@jmercha.dev>",
-  "license": "MIT",  "scripts": {
+  "license": "MIT", 
+  "scripts": {
     "test": "tsc && jest",
     "clean": "rimraf dist/",
     "build-client": "parcel build client/index.html --out-dir dist/client",
