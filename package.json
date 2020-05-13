@@ -46,6 +46,6 @@
     "parcel": "^1.12.4",
     "rimraf": "^3.0.0",
     "ts-jest": "^25.5.1",
-    "typescript": "^3.8.3"
+    "typescript": "^3.9.2"
   }
 }
