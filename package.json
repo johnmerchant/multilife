@@ -42,7 +42,7 @@
     "@types/react-share": "^3.0.2",
     "@types/ws": "^7.2.5",
     "cross-env": "^7.0.2",
-    "jest": "^26.0.1",
+    "jest": "^26.1.0",
     "parcel": "^1.12.4",
     "rimraf": "^3.0.0",
     "ts-jest": "^26.1.0",
