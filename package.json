@@ -28,7 +28,7 @@
     "react-redux": "^7.2.0",
     "react-share": "^4.2.0",
     "redux": "^4.0.5",
-    "ws": "^7.3.0"
+    "ws": "^7.3.1"
   },
   "devDependencies": {
     "@types/blob-to-buffer": "^1.2.0",
