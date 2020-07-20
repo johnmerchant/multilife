@@ -1,6 +1,6 @@
-FROM node:13.6.0-alpine3.11 AS base
-FROM base AS build
+FROM node:14.5.0-alpine3.11 AS base
 
+FROM base AS build
 RUN apk add -u --no-cache make g++ python util-linux 
 
 RUN mkdir /app

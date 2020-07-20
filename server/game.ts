@@ -1,6 +1,7 @@
 import { World, WorldLookup, Cell, Point } from "../models";
 import { cells, stringify, createLookup, range, lookupNeighbors, setCell, setCells, MAX_X, MAX_Y } from "../common/world";
 import { mix } from '../common/color';
+
 /**
  * Represents an instance of Conway's Game of Life game state.
  */
