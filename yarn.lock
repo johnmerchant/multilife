@@ -5946,10 +5946,10 @@ react-dom@^16.11.0:
     prop-types "^15.6.2"
     scheduler "^0.19.1"
 
-react-github-corner@^2.3.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/react-github-corner/-/react-github-corner-2.3.0.tgz#73ab17324b670c9cd955567b09663d385cfb05ef"
-  integrity sha512-yVh8wtAfVA5CQYn8ygyxtsuCMoyiSEBVnzQJ3ynyWxZ1BzT2MHop4baZn/PnUnU9Yh8mwhLS5Y1RVxM5zNotGw==
+react-github-corner@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/react-github-corner/-/react-github-corner-2.4.0.tgz#a10b7efe64562971da313417d75ae7d66616f0be"
+  integrity sha512-haW1UPNpg0BPgY0HnG1jikfF+iRFagUzjCHt1Ze2d4sf6E4poVmHJJObaSVdsAJ1hZc5Z92D512/qdFS4EYSMw==
 
 react-is@^16.12.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.9.0:
   version "16.13.1"
