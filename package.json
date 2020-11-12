@@ -16,7 +16,7 @@
     "dev-server": "npm run clean && npm run build-server && cross-env HTTP_PORT=5000 node dist/server/server"
   },
   "dependencies": {
-    "@emotion/core": "^10.0.27",
+    "@emotion/core": "^11.0.0",
     "blob-to-buffer": "^1.2.8",
     "color": "^3.1.2",
     "color-namer": "^1.4.0",
