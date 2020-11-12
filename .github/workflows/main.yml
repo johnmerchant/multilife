@@ -1,6 +1,15 @@
 name: CI
 on: [push]
 jobs:
+  test:
+   runs-on: [ubuntu-latest]
+   steps:
+     - name: Setup Node.js environment
+       uses: actions/setup-node@v2.1.2
+     - name: Restore packages
+       run: yarn --pure-lockfile
+     - name: Run tests
+       run: yarn test
   build:
     runs-on: [ubuntu-latest]
     steps:
