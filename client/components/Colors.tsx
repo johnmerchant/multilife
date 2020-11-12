@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { jsx } from '@emotion/core';
+import { jsx } from '@emotion/react';
 
 import { populationListStyle } from '../styles';
 import { ColorRanking } from "../../models";

@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import {jsx} from '@emotion/core';
+import {jsx} from '@emotion/react';
 import { connect } from 'react-redux';
 import { useMemo } from 'react';
 import { ColorRanking } from "../../models";

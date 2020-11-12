@@ -1,5 +1,6 @@
 /** @jsx jsx */
-import { jsx, Global } from '@emotion/core';
+import { jsx, Global } from '@emotion/react';
+import {} from '@emotion/react/types/css-prop';
 import {createStore} from 'redux';
 import {reducer} from '../reducers';
 import {Provider} from 'react-redux';
