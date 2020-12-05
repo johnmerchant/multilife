@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@emotion/core": "^11.0.0",
-    "@emotion/react": "^11.0.0",
+    "@emotion/react": "^11.1.2",
     "@emotion/styled": "^11.0.0",
     "blob-to-buffer": "^1.2.9",
     "color": "^3.1.3",
